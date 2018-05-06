@@ -5,5 +5,6 @@
     <a href="homepage.php">Home</a>
     <a href="community.php">Community</a>
     <a href="#">Connect/Register</a>
+    <a href="#" onclick="displayAdd()">Add Article</a>
   </div>
 </div>
