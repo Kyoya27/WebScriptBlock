@@ -67,4 +67,6 @@
 	</div>
 </body>
 
-<?php require 'footer.html'; ?>
+<?php require 'modal.html'; ?>
+=======
+</body>

@@ -1,5 +1,6 @@
 <?php include 'header.php' ?>
 <?php include 'navbar.php' ?>
+<script src="js/homepage.js"></script>
 
 <body class="backgroundIn">
 	<div class="backgroundCenter">
@@ -24,4 +25,31 @@
 	</div>
 </body>
 
-<?php require 'footer.html'; ?>
+<?php require 'modal.html'; ?>
+<div id="addModal" class="modal" style="text-align: center;">
+	<div class="modal-content">
+		<div style="text-align: right;">
+			<span onclick="closeAdd()" class="close">&times;</span>
+		<div>
+		<div class="articleTitle"  style="text-align: center !important;">Add an Article</div>
+		<div style="text-align: center;">
+			<div>
+				<input id="articleTitle" class="addInput" type="text" placeholder="Title :">
+			</div>
+			<div>
+				<textarea id="articleContent" class="addInput" rows="4" cols="50" type="text" placeholder="Content:"></textarea>
+			</div>
+			<div style="display: none;" class="errorAdd">One Field is Empty !</div>
+			<div><a href="#" class="btn btn-primary addButton" onclick="addArticle()">Add Article</a></div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+window.onclick = function(event) {
+	var modal = document.getElementById('addModa');
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+} 
+</script>
