@@ -20,11 +20,12 @@
             </div>
           </div>
           <div class="form-group">
-            <input type="text" class="form-control" id="text_upload" placeholder="Script Title">
+            <input type="text" class="form-control" id="title_upload" placeholder="Script Title">
           </div>
           <div class="form-group">
-            <textarea class="form-control" id="textarea_upload" rows="5" placeholder="Description"></textarea>
+            <textarea class="form-control" id="description_upload" rows="5" placeholder="Description"></textarea>
           </div>
+          <div id="id_user_upload" class="text-hide"><?php echo $_SESSION['id']; ?></div>
           <button type="submit" class="offset-md-6 col-md-6 btn btn-darkblue text-white" onclick="upload_script()">Submit</button>
         </form>
       </div>

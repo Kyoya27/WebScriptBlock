@@ -64,7 +64,7 @@ function displayDown(id){
 			if(data != undefined){
 				$("#downTitle").html(data[0].name);
 				$("#downDesc").html(data[0].description);
-				$("#downModalButton").html("<a href=\"Scripts/"+data[0].name+"_"+id+".sm\" class=\"btn btn-primary addButton\" onclick=\"closeDown()\">Download Script</a>");
+				$("#downModalButton").html("<a href=\"scripts/"+data[0].name+"_"+id+".sm\" class=\"btn btn-primary addButton\" onclick=\"closeDown()\">Download Script</a>");
 				modal.style.display = "block";
 			}
 		}
@@ -85,15 +85,45 @@ function upload_script() {
   console.log(file);
   if(file === undefined || file.name.split('.').pop().localeCompare('sm') !== 0) {
     $("#input_file_error").removeClass('text-hide');
-  } else {
+  } else {    
     $.ajax({
-      url: 'save_script.php',
-      type: 'POST',
-      data: { file: file, name: file.name },
+      url: "http://localhost:8080/script/add",
+      type: "POST",
+      data: JSON.stringify({
+        name: $("#title_upload").val(),
+        description: $("#description_upload").val(),
+        size: file.size,
+        id_user: $("#id_user_upload").text()
+      }),
+      async: false,
+      beforeSend: function(xhr){
+        xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+        xhr.setRequestHeader("Content-type", "application/json");
+      },
       success: function(data) {
-        console.log(data);
+        let form = new FormData();
+        form.append("file", $("#input_file")[0]);
+        form.append("name",  $("#title_upload").val());
+        form.append("id",  data.id);
+        console.log("id = " + data.id);
+        console.log("form = " + form);
+        
+        $.ajax({
+          url: 'save_script.php',
+          type: 'POST',
+          processData: false,
+          contentType: false,
+          data: form,
+          success: function(data) {
+            $("#errorr").html(data);
+            console.log(data);
+          }
+        });
       }
-    })
+    });
+    
+    closeUpload();
+    getScript();
   }
 }
 

@@ -23,7 +23,7 @@
 		<div style="text-align: right;">
 			<span onclick="closeDown()" class="close">&times;</span>
 		</div>
-		<div class="articleTitle"  style="text-align: center !important;">Download</div>
+		<div class="articleTitle" style="text-align: center !important;">Download</div>
 		<div style="text-align: center;">
 			<div id="downTitle" class="articleTitle">
 			</div>
