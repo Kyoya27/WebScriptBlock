@@ -282,3 +282,32 @@
 	margin-left: auto;
 	margin-right: auto;
 }
+
+/* MODAL STYLE */
+
+.modalTitles {
+	font-family: "cubic";
+  color: #fff;
+}
+
+#log_in:after {
+  content:" ";
+  margin:0 -15px;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  right: 5%;
+  background: #fff;
+}
+
+.btn-darkblue {
+  background-color: #07093D;
+  border: 2px solid #C3C3E5;
+  border-radius: 30px;
+}
+
+.btn-darkblue:hover {
+	background-color: #000; 
+	border-radius: 50px;
+}

@@ -13,7 +13,6 @@
 	<div id="article">
 	</div>
 </body>
-
 <div id="addModal" class="modal" style="text-align: center;">
 	<div class="modal-content">
 		<div style="text-align: right;">

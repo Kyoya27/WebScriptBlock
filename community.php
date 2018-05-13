@@ -7,6 +7,7 @@
 		<div class="entryText">Behold before the great Blocks Library where mortals sew the strings of the scripts infinity!</div>
 	</div>
 	<div class="articlePartTitle backgroundArticle">Blocks Library</div>
+  <div class="btn btn-darkblue text-white" onclick="upload_modal()">Upload</div>
 	<div class="article">
 		<div class="tableBack">
 			<table class="tableCom">
@@ -64,4 +65,8 @@
 			</table>
 		</div>
 	</div>
+</body>
+
+<?php require 'modal.html'; ?>
+=======
 </body>
