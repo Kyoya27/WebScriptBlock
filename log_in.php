@@ -14,7 +14,7 @@ try {
 }
 
 if($error === false) {
-  $query = $pdo->prepare("SELECT id, email, password FROM user WHERE name = :login");
+  $query = $pdo->prepare("SELECT id, email, password, rank FROM user WHERE name = :login");
   $query->execute(array(
     'login' => $login
   ));
@@ -24,6 +24,7 @@ if($error === false) {
     if(password_verify($_POST["pwd"], $res["password"])) {
       $_SESSION["email"] = $res['email'];
       $_SESSION["id"] = $res['id'];
+      $_SESSION["rank"] = $res['rank'];
       $_SESSION["accesstoken"] = bin2hex($res['email']);
     } else {
         echo "error";

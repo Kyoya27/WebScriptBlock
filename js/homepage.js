@@ -1,8 +1,4 @@
-$(document).ready(function(){
-	getArticle();
-});
-
-function getArticle(){
+function getArticle(rank){
 	$.ajax({
 		url: "http://localhost:8080/article",
 		type: "GET",
@@ -24,7 +20,9 @@ function getArticle(){
 					if(data[i].available === 1){
 						let content = "<div id=\"article_"+data[i].id+"\"class=\"article\">";
 						content += "<div class=\"backgroundArticle\">";
-						content += "<div style=\"text-align: right; margin-right: 15px;\"><span onclick=\"displayDel('"+data[i].subject+"',"+data[i].id+")\" class=\"close\">&times;</span><span onclick=\"displayMod("+data[i].id+")\"class=\"close\" style=\"font-size: 15px; margin-top: 8px;\">&#9998;</span></div>";
+						if(rank == 1){
+							content += "<div style=\"text-align: right; margin-right: 15px;\"><span onclick=\"displayDel('"+data[i].subject+"',"+data[i].id+")\" class=\"close\">&times;</span><span onclick=\"displayMod("+data[i].id+")\"class=\"close\" style=\"font-size: 15px; margin-top: 8px;\">&#9998;</span></div>";
+						}
 						content += "<div class=\"articleTitle\">"+data[i].subject+"</div>";
 						content += "<div class=\"articleBody\">"+data[i].content+"</div>";
 						content += "</div></div>";

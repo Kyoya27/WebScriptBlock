@@ -9,7 +9,9 @@
     } else {
       echo '<a href="#" onclick="displayConnect()">Connect/Register</a>';
     }
-    ?>
-    <a href="#" onclick="displayAdd()">Add Article</a>
+    if(isset($_SESSION['rank']) && $_SESSION['rank'] == 1) {
+      echo '<a href="#" onclick="displayAdd()">Add Article</a>';
+    }
+     ?>
   </div>
 </div>
