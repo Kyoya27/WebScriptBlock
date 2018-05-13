@@ -245,6 +245,14 @@
 	border: 2px solid #C3C3E5;
 }
 
+.searchInput{
+	margin-top: 2%;
+	width: 30%;
+	padding: 10px 0px;
+	border-radius: 30px;
+}
+
+
 .addButton:hover {
     color: #fff;
     background-color: black;
@@ -259,6 +267,11 @@
 
 .uploadButton{
 	text-align: right;
+	margin-top: 2%;
+}
+
+#searchInp{
+	text-align: left;
 	margin-top: 2%;
 }
 
