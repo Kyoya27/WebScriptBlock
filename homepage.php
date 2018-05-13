@@ -19,7 +19,7 @@
 		<div style="text-align: right;">
 			<span onclick="closeAdd()" class="close">&times;</span>
 		</div>
-		<div class="articleTitle"  style="text-align: center !important;">Add an Article</div>
+		<div id="addModaltitle" class="articleTitle"  style="text-align: center !important;">Add an Article</div>
 		<div style="text-align: center;">
 			<div>
 				<input id="articleTitle" class="addInput" type="text" placeholder="Title :">
@@ -28,7 +28,7 @@
 				<textarea id="articleContent" class="addInput" rows="4" cols="50" type="text" placeholder="Content:"></textarea>
 			</div>
 			<div style="display: none;" class="errorAdd">One Field is Empty !</div>
-			<div><a href="#" class="btn btn-primary addButton" onclick="addArticle()">Add Article</a></div>
+			<div id="addModalButton"></div>
 		</div>
 	</div>
 </div>
@@ -37,7 +37,8 @@
 	<div class="modal-content">
 		<div style="text-align: right;">
 			<span onclick="closeDel()" class="close">&times;</span>
-			<div id="delArticleTitle" class="articleTitle"  style="text-align: center !important;"></div>
+			<div id="ArticleId" style="display:none;"></div>
+			<div id="delArticleTitle" class="articleTitle"  style="text-align: center !important; text-decoration: none !important;"></div>
 			<div style="text-align: center;">
 				<a href="#" class="btn btn-primary addButton" onclick="delArticle()">Yes...</a>
 				<a href="#" class="btn btn-primary addButton" onclick="closeDel()">NO!</a>
@@ -48,9 +49,8 @@
 
 <script type="text/javascript">
 window.onclick = function(event) {
-	var modal = document.getElementById('addModa');
-    if (event.target == modal) {
-        modal.style.display = "none";
-    }
+	closeModal('addModal',event);
+	closeModal('connectModal',event);
+	closeModal('delModal',event);
 } 
 </script>
