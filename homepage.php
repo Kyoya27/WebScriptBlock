@@ -1,5 +1,6 @@
 <?php include 'header.php' ?>
 <?php include 'navbar.php' ?>
+<?php include 'connectmodal.html' ?>
 <script src="js/homepage.js"></script>
 
 <body class="backgroundIn">
@@ -13,11 +14,12 @@
 	<div id="article">
 	</div>
 </body>
+
 <div id="addModal" class="modal" style="text-align: center;">
 	<div class="modal-content">
 		<div style="text-align: right;">
 			<span onclick="closeAdd()" class="close">&times;</span>
-		<div>
+		</div>
 		<div class="articleTitle"  style="text-align: center !important;">Add an Article</div>
 		<div style="text-align: center;">
 			<div>
@@ -28,6 +30,19 @@
 			</div>
 			<div style="display: none;" class="errorAdd">One Field is Empty !</div>
 			<div><a href="#" class="btn btn-primary addButton" onclick="addArticle()">Add Article</a></div>
+		</div>
+	</div>
+</div>
+
+<div id="delModal" class="modal" style="text-align: center;">
+	<div class="modal-content">
+		<div style="text-align: right;">
+			<span onclick="closeDel()" class="close">&times;</span>
+			<div id="delArticleTitle" class="articleTitle"  style="text-align: center !important;"></div>
+			<div style="text-align: center;">
+				<a href="#" class="btn btn-primary addButton" onclick="delArticle()">Yes...</a>
+				<a href="#" class="btn btn-primary addButton" onclick="closeDel()">NO!</a>
+			</div>
 		</div>
 	</div>
 </div>

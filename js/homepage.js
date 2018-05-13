@@ -24,6 +24,7 @@ function getArticle(){
 					if(data[i].available === 1){
 						let content = "<div class=\"article\">";
 						content += "<div class=\"backgroundArticle\">";
+						content += "<div style=\"text-align: right; margin-right: 15px;\"><span onclick=\"displayDel('"+data[i].subject+"')\" class=\"close\">&times;</span></div>";
 						content += "<div class=\"articleTitle\">"+data[i].subject+"</div>";
 						content += "<div class=\"articleBody\">"+data[i].content+"</div>";
 						content += "</div></div>";
@@ -36,6 +37,16 @@ function getArticle(){
 	});
 }
 
+function closeDel() {
+	var modal = document.getElementById('delModal');
+    modal.style.display = "none";
+}
+
+function displayDel(title){
+	var modal = document.getElementById('delModal');
+	$("#delArticleTitle").html("Are you sure you want to delete '"+title+"' article from our site ?!")
+	modal.style.display = "block";
+}
 
 function closeAdd() {
 	var modal = document.getElementById('addModal');

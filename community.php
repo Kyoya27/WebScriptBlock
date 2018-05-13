@@ -66,7 +66,3 @@
 		</div>
 	</div>
 </body>
-
-<?php require 'modal.html'; ?>
-=======
-</body>
