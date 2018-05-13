@@ -58,3 +58,20 @@ function displayMod(id){
 	$("#articleContent").val($("#article_"+id+" .backgroundArticle .articleBody").html());
 	 modal.style.display = "block";
 }
+
+function upload_script() {
+  let file = $("#input_file")[0].files[0];
+  console.log(file);
+  if(file === undefined || file.name.split('.').pop().localeCompare('sm') !== 0) {
+    $("#input_file_error").removeClass('text-hide');
+  } else {
+    $.ajax({
+      url: 'save_script.php',
+      type: 'POST',
+      data: { file: file, name: file.name },
+      success: function(data) {
+        console.log(data);
+      }
+    })
+  }
+}
