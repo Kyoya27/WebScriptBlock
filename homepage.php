@@ -53,4 +53,13 @@ window.onclick = function(event) {
 	closeModal('connectModal',event);
 	closeModal('delModal',event);
 } 
+$(document).ready(function(){
+	<?php
+	if(isset($_SESSION['rank']) && $_SESSION['rank'] == 1) {
+      	echo 'getArticle(1);';
+    }else{
+    	echo 'getArticle(0);';
+    }
+	?>
+});
 </script>
