@@ -217,11 +217,12 @@
     color: white;
     font-size: 28px;
     font-weight: bold;
+    opacity:1 !important;
 }
 
 .close:hover,
 .close:focus {
-    color: white;
+    color: grey;
     text-decoration: none;
     cursor: pointer;
 } 

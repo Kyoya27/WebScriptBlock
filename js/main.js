@@ -15,3 +15,11 @@ function upload_modal() {
   
   $('#modal').modal('show');
 }
+
+function closeModal(modalId,event){
+	var modal = document.getElementById(modalId);
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+	
