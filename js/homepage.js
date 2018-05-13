@@ -52,7 +52,6 @@ function displayMod(id){
 }
 
 function modArticle(id){
-	console.log($("#articleContent").val());
 	if($("#articleTitle").val() !== "" && $("#articleContent").val() !== "" ){
 		$.ajax({
 			url: "http://localhost:8080/article/update",
