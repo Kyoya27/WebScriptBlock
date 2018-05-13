@@ -13,11 +13,10 @@
       <div class="offset-md-2 col-md-8">
         <form class="offset-md-1 col-md-10">
           <div class="form-group">
-            <div class="input-group">
-              <div class="custom-file">
-                <label class="custom-file-label float-none" for="browse_file">Choose script</label>
-                <input type="file" class="custom-file-input" id="browse_file">
-              </div>
+            <input type="file" class="form-control-file text-white" id="input_file">
+            <div id="input_file_error" class="text-hide">
+              <div class="float-left text-danger">&times; Please provide a valid script</div>
+              <br>
             </div>
           </div>
           <div class="form-group">
@@ -26,7 +25,7 @@
           <div class="form-group">
             <textarea class="form-control" id="textarea_upload" rows="5" placeholder="Description"></textarea>
           </div>
-          <button type="submit" class="offset-md-6 col-md-6 btn btn-darkblue text-white">Submit</button>
+          <button type="submit" class="offset-md-6 col-md-6 btn btn-darkblue text-white" onclick="upload_script()">Submit</button>
         </form>
       </div>
     </div>

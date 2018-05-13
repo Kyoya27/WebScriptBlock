@@ -35,7 +35,7 @@ function getScript(){
 					content += "<td>"+data[i].name+"</td>";
 					content += "<td>"+data[i].size+" kb</td>";
 					content += "<td>"+data[i].downloads_count+"</td>";
-					content += "<td><a href=\"#\" onclick=\"displayDownload("+data[i].id+")\">Download</a></td>";
+					content += "<td><a href=\"#\" onclick=\"displayDown("+data[i].id+")\">Download</a></td>";
 					content += "</tr>";
 					$(content).appendTo("#Scripts");
 				}
@@ -45,20 +45,40 @@ function getScript(){
 	});
 }
 
-function closeMod() {
-	var modal = document.getElementById('addModal');
+function closeDown() {
+	var modal = document.getElementById('downModal');
     modal.style.display = "none";
 }
 
-function displayMod(id){
-	var modal = document.getElementById('addModal');
-	$("#addModaltitle").html("Update an Article");
-	$("#addModalButton").html("<a href=\"#\" class=\"btn btn-primary addButton\" onclick=\"modArticle("+id+")\">Update Article</a>");
-	$("#articleTitle").val($("#article_"+id+" .backgroundArticle .articleTitle").html());
-	$("#articleContent").val($("#article_"+id+" .backgroundArticle .articleBody").html());
-	 modal.style.display = "block";
+function displayDown(id){
+	var modal = document.getElementById('downModal');
+	$.ajax({
+		url: "http://localhost:8080/script?id="+id,
+		type: "GET",
+		beforeSend: function(xhr){
+			xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+			xhr.setRequestHeader("Content-type", "application/json");
+		},
+		dataType : 'json',
+		success: function(data) {
+			if(data != undefined){
+				$("#downTitle").html(data[0].name);
+				$("#downDesc").html(data[0].description);
+				$("#downModalButton").html("<a href=\"Scripts/"+data[0].name+"_"+id+".sm\" class=\"btn btn-primary addButton\" onclick=\"closeDown()\">Download Script</a>");
+				modal.style.display = "block";
+			}
+		}
+	});
 }
 
+function downScript(name, id){
+	window.location.href = "./Scripts/"+name+"_"+id+".sm";
+}
+
+function displayUpload(){
+	var modal = document.getElementById('uploadModal');
+	 modal.style.display = "block";
+}
 
 function sortTable(n) {
   var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
@@ -115,4 +135,26 @@ function searchRefresh(){
         }
     }
 
+}
+
+function upload_script() {
+  let file = $("#input_file")[0].files[0];
+  console.log(file);
+  if(file === undefined || file.name.split('.').pop().localeCompare('sm') !== 0) {
+    $("#input_file_error").removeClass('text-hide');
+  } else {
+    $.ajax({
+      url: 'save_script.php',
+      type: 'POST',
+      data: { file: file, name: file.name },
+      success: function(data) {
+        console.log(data);
+      }
+    })
+  }
+}
+
+function closeUpload() {
+	var modal = document.getElementById('uploadModal');
+    modal.style.display = "none";
 }

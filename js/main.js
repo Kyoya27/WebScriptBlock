@@ -8,16 +8,6 @@ function displayConnect(){
 	 modal.style.display = "block";
 }
 
-function displayUpload(){
-	var modal = document.getElementById('uploadModal');
-	 modal.style.display = "block";
-}
-
-function closeUpload() {
-	var modal = document.getElementById('uploadModal');
-    modal.style.display = "none";
-}
-
 function sign_up() {
   let form = $("#signin_form");
   let validation = Array.prototype.filter.call(form, function(data) {
@@ -119,8 +109,7 @@ function log_in() {
   }
 }
 
-
-function closeModal(modalId,event){
+function closeModal(modalId, event){
 	var modal = document.getElementById(modalId);
     if (event.target == modal) {
         modal.style.display = "none";

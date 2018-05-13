@@ -22,7 +22,29 @@
 			</table>
 		</div>
 	</div>
+	<div id="downModal" class="modal" style="text-align: center;">
+	<div class="modal-content">
+		<div style="text-align: right;">
+			<span onclick="closeDown()" class="close">&times;</span>
+		</div>
+		<div class="articleTitle"  style="text-align: center !important;">Download</div>
+		<div style="text-align: center;">
+			<div id="downTitle" class="articleTitle">
+			</div>
+			<div id="downDesc" class="articleBody">
+			</div>
+			<div id="downModalButton"></div>
+		</div>
+	</div>
+</div>
 </body>
 <div id="errorr"></div>
 
 <script src="js/community.js"></script>
+<script type="text/javascript">
+window.onclick = function(event) {
+	closeModal('downModal',event);
+	closeModal('connectModal',event);
+	closeModal('uploadModal',event);
+} 
+</script>
