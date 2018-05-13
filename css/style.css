@@ -237,7 +237,6 @@
 
 .addButton{
 	font-size: 20px;
-	margin-top: 2%;
 	width: 30%;
 	padding: 10px 0px;
 	background-color: #07093D;
@@ -247,9 +246,11 @@
 
 .searchInput{
 	margin-top: 2%;
+	margin-left: 39%;
 	width: 30%;
 	padding: 10px 0px;
 	border-radius: 30px;
+	border: 2px solid #C3C3E5;
 }
 
 
@@ -266,7 +267,7 @@
 /* COMMUNITY STYLE */
 
 .uploadButton{
-	text-align: right;
+	text-align: left;
 	margin-top: 2%;
 }
 

@@ -10,12 +10,9 @@
 	<div class="articlePartTitle backgroundArticle">Blocks Library</div>
 	<div class="article">
 		<div class="tableBack">
-			<div class="searchScript">
-				
-			</div>
 			<div class="uploadButton">
+				<a href="#" class="btn btn-primary addButton" onclick="displayUpload()">  Upload</a>
 				<input type="text" class="searchInput" id="searchInp" onkeyup="searchRefresh()" placeholder="  Search for scripts..">
-				<a href="#" class="btn btn-primary addButton" onclick="displayUpload()">Upload</a>
 			</div>
 			<table id="Scripts" class="tableCom">
 				
