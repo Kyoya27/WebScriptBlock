@@ -1,8 +1,4 @@
 <?php
-//echo $_POST['login'];
-//echo $_POST['email'];
-//echo $_POST['pwd1'];
-//echo $_POST['pwd2'];
 
 $login = $_POST['login'];
 $email = $_POST['email'];
@@ -10,7 +6,13 @@ $pwd1 = $_POST['pwd1'];
 $pwd2 = $_POST['pwd2'];
 $error = false;
 
-$pdo = new PDO("mysql:host=localhost;dbname:script_block", "root", "");
+try {
+  $pdo = new PDO("mysql:dbname=script_block;host=localhost", "root", "");
+} catch(Exception $e) {
+  die('Erreur : '.$e->getMessage());
+  echo "erreur";
+  $error = true;
+}
 
 if($pwd1 !== $pwd2) {
   echo "error_pwd";
@@ -18,11 +20,21 @@ if($pwd1 !== $pwd2) {
 }
 
 if($error === false) {
-  $hash_pwd = password_hash($pwd1, PASSWORD_DEFAULT);
-  $req = $pdo->prepare('INSERT INTO user(name, email, password) VALUES(:login, :email, :pwd)');
-  $req->execute(array(
-    'login' => $login,
-    'email' => $email,
-    'pwd' => $pwd1
+  $query = $pdo->prepare("SELECT * FROM user WHERE name = :login");
+  $query->execute(array(
+    'login' => $login
   ));
+  $res = $query->fetchAll();
+  if(empty($res)) {
+    $hash_pwd = password_hash($pwd1, PASSWORD_DEFAULT);
+
+    $req = $pdo->prepare('INSERT INTO user(name, email, password) VALUES(:login, :email, :pwd)');
+    $req->execute(array(
+      'login' => $login,
+      'email' => $email,
+      'pwd' => $hash_pwd
+    ));
+  } else {
+    echo "error_login";
+  }
 }

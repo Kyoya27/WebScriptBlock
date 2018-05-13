@@ -3,7 +3,13 @@
   <div class="dropdown-content">
     <a href="homepage.php">Home</a>
     <a href="community.php">Community</a>
-    <a href="#" onclick="displayConnect()">Connect/Register</a>
+    <?php
+    if(isset($_SESSION['email'])) {
+      echo '<a href="destroy_session.php">Disconnect</a>';
+    } else {
+      echo '<a href="#" onclick="displayConnect()">Connect/Register</a>';
+    }
+    ?>
     <a href="#" onclick="displayAdd()">Add Article</a>
   </div>
 </div>
