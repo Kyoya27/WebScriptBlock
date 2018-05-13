@@ -1,6 +1,5 @@
 <?php include 'header.php' ?>
 <?php include 'navbar.php' ?>
-<?php include 'connectmodal.html' ?>
 <script src="js/homepage.js"></script>
 
 <body class="backgroundIn">
