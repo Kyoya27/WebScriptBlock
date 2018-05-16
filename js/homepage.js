@@ -69,7 +69,7 @@ function modArticle(id){
 			success: function() {
 				$(".errorAdd").hide();
 				console.log("Article Updates");
-				getArticle();
+				getArticle(1);
 				closeAdd();
 			}
 		});
@@ -84,7 +84,7 @@ function delArticle(){
 	    url: 'http://localhost:8080/article/remove/'+value,
 	    type: 'DELETE',
 	    success: function(result) {
-			getArticle();
+			getArticle(1);
 			closeDel();
 	    }
 	});
@@ -135,7 +135,7 @@ function addArticle(){
 			success: function() {
 				$(".errorAdd").hide();
 				console.log("Article Added");
-				getArticle();
+				getArticle(1);
 				closeAdd();
 			}
 		});
