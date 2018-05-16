@@ -133,12 +133,6 @@ function reportScript(id){
 			}
 		});
 	}
-
-	
-
-	
-
-
 }
 
 function downScript(name, id){
@@ -209,7 +203,7 @@ function searchRefresh(){
 
 function upload_script() {
   let file = $("#input_file")[0].files[0];
-  console.log(file);
+	
   if(file === undefined || file.name.split('.').pop().localeCompare('sm') !== 0) {
     $("#input_file_error").removeClass('text-hide');
   } else {    
@@ -228,29 +222,25 @@ function upload_script() {
         xhr.setRequestHeader("Content-type", "application/json");
       },
       success: function(data) {
-        let form = new FormData();
-        form.append("file", $("#input_file")[0]);
-        form.append("name",  $("#title_upload").val());
-        form.append("id",  data.id);
-        console.log("id = " + data.id);
-        console.log("form = " + form);
-        
+				var formData = new FormData();
+				formData.append('file', file);
+				formData.append('id', data.id);
+				formData.append('name', $("#title_upload").val());
+				closeUpload();
+				
         $.ajax({
           url: 'save_script.php',
           type: 'POST',
           processData: false,
           contentType: false,
-          data: form,
+          data: formData,
           success: function(data) {
-            $("#errorr").html(data);
-            console.log(data);
+						closeUpload();
+						getScript();
           }
         });
       }
     });
-    
-    closeUpload();
-    getScript();
   }
 }
 
