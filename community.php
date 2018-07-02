@@ -11,7 +11,7 @@
 	<div class="article">
 		<div class="tableBack">
 			<div class="uploadButton">
-				<a href="#" class="btn btn-primary addButton" onclick="displayUpload()">  Upload</a>
+				  <a href="#" id="button_upload" class="btn btn-primary addButton" onclick="displayUpload()">  Upload</a>
 				<input type="text" class="searchInput" id="searchInp" onkeyup="searchRefresh()" placeholder="  Search for scripts..">
 			</div>
 			<table id="Scripts" class="tableCom">

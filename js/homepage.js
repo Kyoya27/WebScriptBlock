@@ -3,7 +3,6 @@ function getArticle(rank){
 		url: "http://localhost:8080/article",
 		type: "GET",
 		beforeSend: function(xhr){
-			xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
 			xhr.setRequestHeader("Content-type", "application/json");
 		},
 		dataType : 'json',
@@ -20,7 +19,7 @@ function getArticle(rank){
 					if(data[i].available === 1){
 						let content = "<div id=\"article_"+data[i].id+"\"class=\"article\">";
 						content += "<div class=\"backgroundArticle\">";
-						if(rank == 1){
+						if(rank === 1){
 							content += "<div style=\"text-align: right; margin-right: 15px;\"><span onclick=\"displayDel('"+data[i].subject+"',"+data[i].id+")\" class=\"close\">&times;</span><span onclick=\"displayMod("+data[i].id+")\"class=\"close\" style=\"font-size: 15px; margin-top: 8px;\">&#9998;</span></div>";
 						}
 						content += "<div class=\"articleTitle\">"+data[i].subject+"</div>";
@@ -58,18 +57,18 @@ function modArticle(id){
 				"id": id,
 				"subject" : $("#articleTitle").val(),
 				"content" : $("#articleContent").val(),
-				"id_user" : 1
+				"id_user" : sessionStorage.getItem("id")
 			}),
 			dataType:'json',
 			async: false,
 			beforeSend: function(xhr){
-				xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+				xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("token"));
 				xhr.setRequestHeader("Content-type", "application/json");
 			},
 			success: function() {
 				$(".errorAdd").hide();
 				console.log("Article Updates");
-				getArticle(1);
+				getArticle(parseInt(sessionStorage.getItem("isAdmin")));
 				closeAdd();
 			}
 		});
@@ -81,12 +80,16 @@ function modArticle(id){
 function delArticle(){
 	var value = $("#ArticleId").html();
 	$.ajax({
-	    url: 'http://localhost:8080/article/remove/'+value,
-	    type: 'DELETE',
-	    success: function(result) {
-			getArticle(1);
-			closeDel();
-	    }
+    url: 'http://localhost:8080/article/remove/'+value,
+    beforeSend: function(xhr){
+				xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("token"));
+				xhr.setRequestHeader("Content-type", "application/json");
+			},
+    type: 'DELETE',
+    success: function(result) {
+      getArticle(parseInt(sessionStorage.getItem("isAdmin")));
+      closeDel();
+    }
 	});
 }
 
@@ -129,13 +132,13 @@ function addArticle(){
 			dataType:'json',
 			async: false,
 			beforeSend: function(xhr){
-				xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+				xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("token"));
 				xhr.setRequestHeader("Content-type", "application/json");
 			},
 			success: function() {
 				$(".errorAdd").hide();
 				console.log("Article Added");
-				getArticle(1);
+				getArticle(parseInt(sessionStorage.getItem("isAdmin")));
 				closeAdd();
 			}
 		});

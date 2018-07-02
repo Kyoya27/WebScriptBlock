@@ -1,3 +1,35 @@
+$(document).ready(function() {
+  if(sessionStorage.getItem("token")) {
+    $("a#authent").on("click", function() {
+      sessionStorage.clear();
+      window.location = 'index.php';
+    });
+    $("a#authent").html("Disconnect");
+  } else {
+    $("a#authent").on("click", displayConnect)
+    $("a#authent").html("Connect/Register");;
+  }
+  $("a#authent").css("cursor", "pointer");
+  
+  if(sessionStorage.getItem("isAdmin") === "1" && sessionStorage.getItem("token")) {
+    var lastpart = window.location.href.substr(window.location.href.lastIndexOf('/') + 1);
+    if(lastpart === "homepage.php" || lastpart === "homepage.php?" || lastpart === "homepage.php#") {
+      $("div#menuNav").append('<a id="article_btn"></a>');
+      $("a#article_btn").removeClass("invisible");
+      $("a#article_btn").on("click", displayAdd);
+      $("a#article_btn").html("Add Article");
+      $("a#article_btn").css("cursor", "pointer");
+    }
+  }
+  
+  let searchParams = new URLSearchParams(window.location.search);
+  if(searchParams.has("reco")) {
+    if(searchParams.get("reco") === "yes") {
+      setTimeout(displayConnect(), 500);
+    }
+  }
+});
+
 function closeConnect() {
 	var modal = document.getElementById('connectModal');
     modal.style.display = "none";
@@ -21,7 +53,7 @@ function sign_up() {
   if(name === "") {
     error = true;
   }
-	if(rgx.test(email) === false || email.localeCompare("") === 0) {
+	if(rgx.test(email) === false || email === "") {
     error = true;
   }
   if(pwd1 === "") {
@@ -82,9 +114,11 @@ function log_in() {
 			}			
 		})
 		.done(function(data) {
-			sessionStorage.setItem("id", data.id);
-			sessionStorage.setItem("token", data.token);
-			console.log(data)
+      Object.keys(data).forEach(function(key) {
+        sessionStorage.setItem(key, data[key]);
+      });
+      
+//      window.location = "homepage.php";
 		})
 		.fail(function(err){
 			console.log(err.responseJSON)
