@@ -330,3 +330,15 @@
 	background-color: #000; 
 	border-radius: 50px;
 }
+
+/* BACKOFFICE */
+
+.searchUser{
+	text-align: right;
+}
+
+.userInput{
+	text-align: center;
+	width: 90%;
+	border-radius: 5px;
+}

@@ -12,13 +12,21 @@ $(document).ready(function() {
   $("a#authent").css("cursor", "pointer");
   
   if(sessionStorage.getItem("isAdmin") === "1" && sessionStorage.getItem("token")) {
+
+    $("div#menuNav").append('<a id="backoffice_btn" href="backoffice.php"></a>');
+    $("a#backoffice_btn").removeClass("invisible");
+    $("a#backoffice_btn").html("BackOffice");
+    $("a#backoffice_btn").css("cursor", "pointer");
+
     var lastpart = window.location.href.substr(window.location.href.lastIndexOf('/') + 1);
     if(lastpart === "homepage.php" || lastpart === "homepage.php?" || lastpart === "homepage.php#") {
+
       $("div#menuNav").append('<a id="article_btn"></a>');
       $("a#article_btn").removeClass("invisible");
       $("a#article_btn").on("click", displayAdd);
       $("a#article_btn").html("Add Article");
       $("a#article_btn").css("cursor", "pointer");
+
     }
   }
   
@@ -47,11 +55,6 @@ function sign_up() {
 	let email = form.find("input[id='email_signin']").val();
 	let pwd1 = form.find("input[id='password_signin1']").val();
 	let pwd2 = form.find("input[id='password_signin2']").val();
-	
-	console.log(name);
-	console.log(email);
-	console.log(pwd1);
-	console.log(pwd2);
 	
   let error = false;
   var rgx = RegExp(".*@.*\\..*");
