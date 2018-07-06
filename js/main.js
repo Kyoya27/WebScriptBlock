@@ -48,6 +48,11 @@ function sign_up() {
 	let pwd1 = form.find("input[id='password_signin1']").val();
 	let pwd2 = form.find("input[id='password_signin2']").val();
 	
+	console.log(name);
+	console.log(email);
+	console.log(pwd1);
+	console.log(pwd2);
+	
   let error = false;
   var rgx = RegExp(".*@.*\\..*");
   if(name === "") {
@@ -114,11 +119,12 @@ function log_in() {
 			}			
 		})
 		.done(function(data) {
+			console.log(data);
       Object.keys(data).forEach(function(key) {
-        sessionStorage.setItem(key, data[key]);
-      });
+      	sessionStorage.setItem(key, data[key]);
+     	});
       
-//      window.location = "homepage.php";
+      window.location = "homepage.php";
 		})
 		.fail(function(err){
 			console.log(err.responseJSON)
