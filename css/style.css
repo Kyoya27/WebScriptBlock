@@ -342,3 +342,27 @@
 	width: 90%;
 	border-radius: 5px;
 }
+
+/* REPORT OFFICE */
+
+.card-title-special {
+	position: relative;
+	z-index: 1;
+	left: 1em;
+	top:-2vh;
+	border: 1px solid black;
+	border-radius: .25em;
+	background-color: white;
+}
+.text-title {
+	transform: translateY(10%);
+	height: 4vh;
+}
+.card-special {
+	height: auto;
+	border: 1px solid black !important;
+}
+.card-hugo {
+	margin-top: 3vh;
+	margin-bottom: 3vh;
+}

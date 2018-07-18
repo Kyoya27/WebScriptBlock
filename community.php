@@ -1,6 +1,8 @@
 <?php include 'header.php' ?>
 <?php include 'navbar.php' ?>
 <?php include 'uploadmodal.html' ?>
+<?php include 'reportmodal.html' ?>
+<?php include 'downloadmodal.html' ?>
 
 <body class="backgroundIn">
 	<div class="backgroundCenter">
@@ -14,26 +16,12 @@
 				  <a href="#" id="button_upload" class="btn btn-primary addButton" onclick="displayUpload()">  Upload</a>
 				<input type="text" class="searchInput" id="searchInp" onkeyup="searchRefresh()" placeholder="  Search for scripts..">
 			</div>
+			<br/>
 			<table id="Scripts" class="tableCom">
 				
 			</table>
 		</div>
 	</div>
-	<div id="downModal" class="modal" style="text-align: center;">
-	<div class="modal-content">
-		<div style="text-align: right;">
-			<span onclick="closeDown()" class="close">&times;</span>
-		</div>
-		<div class="articleTitle" style="text-align: center !important;">Download</div>
-		<div style="text-align: center;">
-			<div id="downTitle" class="articleTitle">
-			</div>
-			<div id="downDesc" class="articleBody">
-			</div>
-			<div id="downModalButton"></div>
-		</div>
-	</div>
-</div>
 </body>
 <div id="errorr"></div>
 

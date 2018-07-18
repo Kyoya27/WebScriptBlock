@@ -13,18 +13,20 @@ $(document).ready(function() {
   
   if(sessionStorage.getItem("isAdmin") === "1" && sessionStorage.getItem("token")) {
 
-    $("div#menuNav").append('<a id="backoffice_btn" href="backoffice.php"></a>');
+		$("div#menuNav").append('<a id="backoffice_btn" href="backoffice.php">Back Office <span class="caret"></span></a>');
     $("a#backoffice_btn").removeClass("invisible");
-    $("a#backoffice_btn").html("BackOffice");
     $("a#backoffice_btn").css("cursor", "pointer");
 
+		$("div#menuNav").append('<a id="report_btn" href="report.php">Report Office <span class="caret"></span></a>');
+		$("a#backoffice_btn").removeClass("invisible");
+		$("a#backoffice_btn").css("cursor", "pointer");
+		
     var lastpart = window.location.href.substr(window.location.href.lastIndexOf('/') + 1);
     if(lastpart === "homepage.php" || lastpart === "homepage.php?" || lastpart === "homepage.php#") {
 
-      $("div#menuNav").append('<a id="article_btn"></a>');
+			$("div#menuNav").append('<a id="article_btn">Add Article</a>');
       $("a#article_btn").removeClass("invisible");
       $("a#article_btn").on("click", displayAdd);
-      $("a#article_btn").html("Add Article");
       $("a#article_btn").css("cursor", "pointer");
 
     }
@@ -36,6 +38,13 @@ $(document).ready(function() {
       setTimeout(displayConnect(), 500);
     }
   }
+});
+
+$('#backoffice_btn').on("click", function(e){
+	console.log("nani")
+	$("#bo_dropdown").toggle();
+	e.stopPropagation();
+	e.preventDefault();
 });
 
 function closeConnect() {

@@ -44,7 +44,7 @@ function getScript(){
 					content += "<td>"+data[i].downloads_count+"</td>";
 					content += "<td><a href=\"#\" onclick=\"displayDown("+data[i].id+")\">Download</a></td>";
           if(sessionStorage.getItem("token")) {
-            content += "<td><a href=\"#\" onclick=\"reportScript("+data[i].id+")\">Report</a></td>";
+						content += "<td><a href=\"#\" onclick=\"displayReport('"+data[i].name+"', "+data[i].id+")\">Report</a></td>";
           }
 					content += "</tr>";
 					$(content).appendTo("#Scripts");
@@ -85,9 +85,9 @@ function displayDown(id){
 		dataType : 'json',
 		success: function(data) {
 			if(data != undefined){
-				$("#downTitle").html(data[0].name);
-				$("#downDesc").html(data[0].description);
-				$("#downModalButton").html("<a href=\"scripts/"+data[0].name+"_"+id+".sm\" class=\"btn btn-primary addButton\" onclick=\"update_dlc("+id+"); closeDown()\">Download Script</a>");
+				$(".downTitle").html(data[0].name);
+				$(".downDesc").html(data[0].description);
+				$(".downModalButton").html("<a href=\"scripts/"+data[0].name+"_"+id+".sm\" class=\"btn btn-primary addButton\" onclick=\"update_dlc("+id+"); closeDown()\">Download Script</a>");
 				modal.style.display = "block";
 			}
 		}
@@ -172,7 +172,7 @@ function downScript(name, id){
 
 function displayUpload(){
 	var modal = document.getElementById('uploadModal');
-	 modal.style.display = "block";
+	modal.style.display = "block";
 }
 
 function sortTable(n) {
@@ -282,5 +282,43 @@ function upload_script() {
 
 function closeUpload() {
 	var modal = document.getElementById('uploadModal');
-    modal.style.display = "none";
+	modal.style.display = "none";
+}
+
+function displayReport(name, id) {
+	console.log(displayReport);
+	$("#reportTitle").html("Report " + name);
+	$("#reportTitle").attr("data-id", id);
+	$("#reportModal").css("display", "block");
+}
+
+function closeReport() {
+	$("#reportModal").css("display", "none");
+}
+
+function reportScript() {
+	const id_script = parseInt($("#reportTitle").data("id"));
+	const id_user = parseInt(sessionStorage.getItem("id"));
+	const comment =	$("#report_comment").val() === "" ? undefined : $("#report_comment").val();
+
+	
+	$.ajax({
+		url: "http://localhost:8080/report/add",
+		type: "POST",
+		beforeSend: function(xhr){
+			xhr.setRequestHeader("Content-type", "application/json");
+			xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("token"));
+		},
+		data: {
+			id_script: id_script,
+			id_user: id_user,
+			comment: comment
+		}
+	})
+	.done(function(res) {
+		console.log(res);
+	})
+	.fail(function(err) {
+		console.log(err.responseText);
+	});
 }
