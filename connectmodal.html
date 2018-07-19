@@ -17,12 +17,12 @@
       <div class="col-md-6" id="log_in">
         <form id="connect_form" class="offset-md-1 col-md-10">
           <div class="form-group">
-            <input type="text" class="form-control" id="username_login" placeholder="Username">
+            <input type="email" class="form-control" id="email_login" placeholder="Email" required>
           </div>
           <div class="form-group">
-            <input type="password" class="form-control" id="password_login" placeholder="Password">
+						<input type="password" class="form-control" id="password_login" placeholder="Password" required>
           </div>
-          <button type="submit" class="offset-md-6 col-md-6 btn btn-darkblue text-white" onclick="log_in()">Submit</button>
+          <button type="button" class="offset-md-6 col-md-6 btn btn-darkblue text-white" onclick="log_in()">Submit</button>
         </form>
       </div>
       <div class="col-md-6">
@@ -40,7 +40,7 @@
             <input type="password" class="form-control" id="password_signin2" placeholder="Password" aria-describedby="pwdHelp" required>
             <small id="pwdHelp" class="form-text text-muted">Please write your password again</small>
           </div>
-          <button type="submit" class="offset-md-6 col-md-6 btn btn-darkblue text-white" onclick="sign_up()">Submit</button>
+          <button type="button" class="offset-md-6 col-md-6 btn btn-darkblue text-white" onclick="sign_up()">Submit</button>
         </form>
       </div>
     </div>

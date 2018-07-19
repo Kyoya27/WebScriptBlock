@@ -1,5 +1,10 @@
 $(document).ready(function(){
 	getScript();
+  if(sessionStorage.getItem("token")) {
+    $("#button_upload").removeClass("disabled")
+  } else {
+    $("#button_upload").addClass("disabled")
+  }
 });
 
 function getScript(){
@@ -7,7 +12,6 @@ function getScript(){
 		url: "http://localhost:8080/script",
 		type: "GET",
 		beforeSend: function(xhr){
-			xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
 			xhr.setRequestHeader("Content-type", "application/json");
 		},
 		dataType : 'json',
@@ -26,7 +30,9 @@ function getScript(){
 				content += "<th onclick='sortTable(2)'>Size&#8597</th>";
 				content += "<th onclick='sortTable(3)'>Nb Download&#8597</th>";
 				content += "<th>Link</th>";
-				content += "<th>Report</th>";
+        if(sessionStorage.getItem("token")) {
+				  content += "<th>Report</th>";
+        }
 				content += "</tr>";
 				$(content).appendTo("#Scripts");
 
@@ -37,7 +43,9 @@ function getScript(){
 					content += "<td>"+data[i].size+" kb</td>";
 					content += "<td>"+data[i].downloads_count+"</td>";
 					content += "<td><a href=\"#\" onclick=\"displayDown("+data[i].id+")\">Download</a></td>";
-					content += "<td><a href=\"#\" onclick=\"reportScript("+data[i].id+")\">Report</a></td>";
+          if(sessionStorage.getItem("token")) {
+						content += "<td><a href=\"#\" onclick=\"displayReport('"+data[i].name+"', "+data[i].id+")\">Report</a></td>";
+          }
 					content += "</tr>";
 					$(content).appendTo("#Scripts");
 				}
@@ -45,6 +53,20 @@ function getScript(){
 			}
 		}
 	});
+}
+
+function update_dlc(id) {
+  $.ajax({
+    url: 'http://localhost:8080/script/updateDLC/'+id,
+    type: 'PUT'
+  })
+  .done(function(data) {
+    getScript();
+  })
+  .fail(function(err) {
+    console.log(err.responseText)
+    closeDown();
+  })
 }
 
 function closeDown() {
@@ -58,15 +80,14 @@ function displayDown(id){
 		url: "http://localhost:8080/script?id="+id,
 		type: "GET",
 		beforeSend: function(xhr){
-			xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
 			xhr.setRequestHeader("Content-type", "application/json");
 		},
 		dataType : 'json',
 		success: function(data) {
 			if(data != undefined){
-				$("#downTitle").html(data[0].name);
-				$("#downDesc").html(data[0].description);
-				$("#downModalButton").html("<a href=\"scripts/"+data[0].name+"_"+id+".sm\" class=\"btn btn-primary addButton\" onclick=\"closeDown()\">Download Script</a>");
+				$(".downTitle").html(data[0].name);
+				$(".downDesc").html(data[0].description);
+				$(".downModalButton").html("<a href=\"scripts/"+data[0].name+"_"+id+".sm\" class=\"btn btn-primary addButton\" onclick=\"update_dlc("+id+"); closeDown()\">Download Script</a>");
 				modal.style.display = "block";
 			}
 		}
@@ -82,7 +103,6 @@ function reportScript(id){
 		url: "http://localhost:8080/script?id="+id,
 		type: "GET",
 		beforeSend: function(xhr){
-			xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
 			xhr.setRequestHeader("Content-type", "application/json");
 		},
 		dataType : 'json',
@@ -107,13 +127,19 @@ function reportScript(id){
 			dataType:'json',
 			async: false,
 			beforeSend: function(xhr){
-				xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+				xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("token"));
 				xhr.setRequestHeader("Content-type", "application/json");
-			},
-			success: function() {
-				getScript();
 			}
-		});
+		})
+    .done(function(data) {
+      getScript();
+    })
+    .fail(function() {
+      sessionStorage.clear();
+      displayConnect();
+      window.location = "homepage.php?reco=yes"
+    });
+    
 	}else{
 		$.ajax({
 			url: "http://localhost:8080/script/update",
@@ -125,13 +151,18 @@ function reportScript(id){
 			dataType:'json',
 			async: false,
 			beforeSend: function(xhr){
-				xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+				xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("token"));
 				xhr.setRequestHeader("Content-type", "application/json");
-			},
-			success: function() {
-				getScript();
 			}
-		});
+		})
+    .done(function() {
+      getScript();
+    })
+    .fail(function() {
+      sessionStorage.clear();
+      displayConnect();
+      window.location = "homepage.php?reco=yes"
+    });;
 	}
 }
 
@@ -141,7 +172,7 @@ function downScript(name, id){
 
 function displayUpload(){
 	var modal = document.getElementById('uploadModal');
-	 modal.style.display = "block";
+	modal.style.display = "block";
 }
 
 function sortTable(n) {
@@ -214,37 +245,80 @@ function upload_script() {
         name: $("#title_upload").val(),
         description: $("#description_upload").val(),
         size: file.size,
-        id_user: $("#id_user_upload").text()
+        id_user: sessionStorage.getItem("id")
       }),
-      async: false,
+//      async: false,
       beforeSend: function(xhr){
         xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+        xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("token"));
         xhr.setRequestHeader("Content-type", "application/json");
-      },
-      success: function(data) {
-				var formData = new FormData();
-				formData.append('file', file);
-				formData.append('id', data.id);
-				formData.append('name', $("#title_upload").val());
-				closeUpload();
-				
-        $.ajax({
-          url: 'save_script.php',
-          type: 'POST',
-          processData: false,
-          contentType: false,
-          data: formData,
-          success: function(data) {
-						closeUpload();
-						getScript();
-          }
-        });
       }
+    })
+    .done(function(data) {
+      var formData = new FormData();
+      formData.append('file', file);
+      formData.append('id', data.id);
+      formData.append('name', $("#title_upload").val());
+      closeUpload();
+
+      $.ajax({
+        url: 'save_script.php',
+        type: 'POST',
+        processData: false,
+        contentType: false,
+        data: formData
+      })
+      .done(function(data) {
+        closeUpload();
+          getScript();
+      });
+    })
+    .fail(function() {
+      sessionStorage.clear();
+      window.location = "homepage.php?reco=yes"
     });
   }
 }
 
 function closeUpload() {
 	var modal = document.getElementById('uploadModal');
-    modal.style.display = "none";
+	modal.style.display = "none";
+}
+
+function displayReport(name, id) {
+	console.log(displayReport);
+	$("#reportTitle").html("Report " + name);
+	$("#reportTitle").attr("data-id", id);
+	$("#reportModal").css("display", "block");
+}
+
+function closeReport() {
+	$("#reportModal").css("display", "none");
+}
+
+function reportScript() {
+	const id_script = parseInt($("#reportTitle").data("id"));
+	const id_user = parseInt(sessionStorage.getItem("id"));
+	const comment =	$("#report_comment").val() === "" ? undefined : $("#report_comment").val();
+
+	
+	$.ajax({
+		url: "http://localhost:8080/report/add",
+		type: "POST",
+		beforeSend: function(xhr){
+			xhr.setRequestHeader("Content-type", "application/json");
+			xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("token"));
+		},
+		data: {
+			id_script: id_script,
+			id_user: id_user,
+			comment: comment
+		}
+	})
+	.done(function(res) {
+		console.log(res);
+	})
+	.fail(function(err) {
+		console.log(err.responseText);
+	});
 }

@@ -1,3 +1,52 @@
+$(document).ready(function() {
+  if(sessionStorage.getItem("token")) {
+    $("a#authent").on("click", function() {
+      sessionStorage.clear();
+      window.location = 'index.php';
+    });
+    $("a#authent").html("Disconnect");
+  } else {
+    $("a#authent").on("click", displayConnect)
+    $("a#authent").html("Connect/Register");;
+  }
+  $("a#authent").css("cursor", "pointer");
+  
+  if(sessionStorage.getItem("isAdmin") === "1" && sessionStorage.getItem("token")) {
+
+		$("div#menuNav").append('<a id="backoffice_btn" href="backoffice.php">Back Office <span class="caret"></span></a>');
+    $("a#backoffice_btn").removeClass("invisible");
+    $("a#backoffice_btn").css("cursor", "pointer");
+
+		$("div#menuNav").append('<a id="report_btn" href="report.php">Report Office <span class="caret"></span></a>');
+		$("a#backoffice_btn").removeClass("invisible");
+		$("a#backoffice_btn").css("cursor", "pointer");
+		
+    var lastpart = window.location.href.substr(window.location.href.lastIndexOf('/') + 1);
+    if(lastpart === "homepage.php" || lastpart === "homepage.php?" || lastpart === "homepage.php#") {
+
+			$("div#menuNav").append('<a id="article_btn">Add Article</a>');
+      $("a#article_btn").removeClass("invisible");
+      $("a#article_btn").on("click", displayAdd);
+      $("a#article_btn").css("cursor", "pointer");
+
+    }
+  }
+  
+  let searchParams = new URLSearchParams(window.location.search);
+  if(searchParams.has("reco")) {
+    if(searchParams.get("reco") === "yes") {
+      setTimeout(displayConnect(), 500);
+    }
+  }
+});
+
+$('#backoffice_btn').on("click", function(e){
+	console.log("nani")
+	$("#bo_dropdown").toggle();
+	e.stopPropagation();
+	e.preventDefault();
+});
+
 function closeConnect() {
 	var modal = document.getElementById('connectModal');
     modal.style.display = "none";
@@ -10,102 +59,88 @@ function displayConnect(){
 
 function sign_up() {
   let form = $("#signin_form");
-  let validation = Array.prototype.filter.call(form, function(data) {
-    data.addEventListener('submit', function(event) {
-      if(data.checkValidity() === false) {
-        event.preventDefault(),
-        event.stopPropagation();
-      }
-    }, false);
-  });
-  
+	
+	let name = form.find("input[id='username_signin']").val();
+	let email = form.find("input[id='email_signin']").val();
+	let pwd1 = form.find("input[id='password_signin1']").val();
+	let pwd2 = form.find("input[id='password_signin2']").val();
+	
   let error = false;
   var rgx = RegExp(".*@.*\\..*");
-  if($("#username_signin").val().localeCompare("") === 0) {
+  if(name === "") {
     error = true;
   }
-  if($("#email_signin").val().localeCompare("") === 0) {
+	if(rgx.test(email) === false || email === "") {
     error = true;
   }
-  if(rgx.test($("#email_signin").val()) === false) {
+  if(pwd1 === "") {
     error = true;
   }
-  if($("#password_signin1").val().localeCompare("") === 0) {
-    error = true;
-  }
-  if($("#password_signin2").val().localeCompare("") === 0) {
+  if(pwd2 === "") {
     error = true;
   }
   
   if(error === false) {
-    $.ajax({
-      url: "sign_in.php",
-      method: "POST",
-      data: {
-        login: $("#username_signin").val(),
-        email: $("#email_signin").val(),
-        pwd1: $("#password_signin1").val(),
-        pwd2: $("#password_signin2").val()
-      },
-      success: function(data) {
-        let verif = 0;
-        console.log(data);
-        $("#errorr").html(data);
-        if(data.localeCompare("error_pwd") === 0) {
-          $("#password_signin1").addClass("is-invalid");
-          $("#password_signin2").addClass("is-invalid");
-          verif = 1;
-        }
-        
-        if(data.localeCompare("error_login") === 0) {
-          $("#username_signin").addClass("is-invalid");
-          verif = 1;
-        }
-        
-        if(verif === 0) closeConnect();
-      }
-    });
-  }
+		$.ajax({
+			url: "http://localhost:8080/user/register",
+			data: JSON.stringify({
+				name: name,
+				email: email,
+				password1: pwd1,
+				password2: pwd2
+			}),		
+			method: "POST",
+			beforeSend: function(xhr){
+				xhr.setRequestHeader("Content-type", "application/json");
+			}
+		})
+		.done(function(data) {
+			console.log(data);
+		})
+		.fail(function(err) {
+			console.log(err.responseJSON)
+		});
+	}
 }
 
 function log_in() {
   let form = $("#connect_form");
-  let validation = Array.prototype.filter.call(form, function(data) {
-    data.addEventListener('submit', function(event) {
-      if(data.checkValidity() === false) {
-        event.preventDefault(),
-        event.stopPropagation();
-      }
-    }, false);
-  });
   
+	let email = form.find("input[id='email_login']").val();
+	let pwd = form.find("input[id='password_login']").val();
+	
   let error = false;
   
-  if($("#username_login").val().localeCompare("") === 0) {
+	if(email === "") {
     error = true;
   }
-  if($("#password_login").val().localeCompare("") === 0) {
+  if(pwd === "") {
     error = true;
   }
   
   if(error === false) {
-    $.ajax({
-      url: "log_in.php",
-      method: "POST",
-      data: {
-        login: $("#username_login").val(),
-        pwd: $("#password_login").val(),
-      },
-      success: function(data) {
-        let verif = 0;
-        if(data.localeCompare("error") === 0) {
-          $("#username_login").addClass("is-invalid");
-          $("#password_login").addClass("is-invalid");
-          verif = 1;
-        }
-        if(verif === 0) window.location.href = 'community.php'
-      }
-    });
+		$.ajax({
+			url: "http://localhost:8080/user/login",
+			method: "POST",
+			data: JSON.stringify({
+				email: email,
+				password: pwd
+			}),
+			beforeSend: function(xhr){
+				xhr.setRequestHeader("Content-type", "application/json");
+			}			
+		})
+		.done(function(data) {
+			console.log(data);
+      Object.keys(data).forEach(function(key) {
+      	sessionStorage.setItem(key, data[key]);
+     	});
+      
+      window.location = "homepage.php";
+		})
+		.fail(function(err){
+			console.log(err.responseJSON)
+		});
   }
 }
 
