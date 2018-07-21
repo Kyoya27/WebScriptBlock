@@ -1,0 +1,20 @@
+{
+    "blocks": [
+        {
+            "id": 21,
+            "arguments": {
+                "#1": "tab",
+                "#blocks0": [
+                    {
+                        "id": 20,
+                        "arguments": {
+                            "#1": "toto",
+                            "#2": "sauce",
+                            "#3": "10"
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}
