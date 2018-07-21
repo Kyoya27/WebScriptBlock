@@ -56,8 +56,7 @@ function modArticle(id){
 			data:JSON.stringify({
 				"id": id,
 				"subject" : $("#articleTitle").val(),
-				"content" : $("#articleContent").val(),
-				"id_user" : sessionStorage.getItem("id")
+				"content" : $("#articleContent").val()
 			}),
 			dataType:'json',
 			async: false,
@@ -107,7 +106,8 @@ function displayDel(title, id){
 
 function closeAdd() {
 	var modal = document.getElementById('addModal');
-    modal.style.display = "none";
+  modal.style.display = "none";
+	$("#article_error").html("").addClass("d-none");
 }
 
 function displayAdd(){
@@ -126,22 +126,24 @@ function addArticle(){
 			type: "POST",
 			data:JSON.stringify({
 				"subject" : $("#articleTitle").val(),
-				"content" : $("#articleContent").val(),
-				"id_user" : 1
+				"content" : $("#articleContent").val()
 			}),
 			dataType:'json',
 			async: false,
 			beforeSend: function(xhr){
 				xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("token"));
 				xhr.setRequestHeader("Content-type", "application/json");
-			},
-			success: function() {
-				$(".errorAdd").hide();
-				console.log("Article Added");
-				getArticle(parseInt(sessionStorage.getItem("isAdmin")));
-				closeAdd();
 			}
-		});
+		})
+		.done((res) => {
+			$(".errorAdd").hide();
+			console.log("Article Added");
+			getArticle(parseInt(sessionStorage.getItem("isAdmin")));
+			closeAdd();
+		})
+		.fail((err) => {
+			$("#article_error").html(err.responseJSON.error).removeClass("d-none");
+		})
 	}else{
 		$(".errorAdd").show();
 	}

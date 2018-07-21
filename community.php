@@ -17,6 +17,8 @@
 				<input type="text" class="searchInput" id="searchInp" onkeyup="searchRefresh()" placeholder="  Search for scripts..">
 			</div>
 			<br/>
+			<div id="script_display_error" class="alert alert-danger pt-2 pb-2 d-none" style="text-align: left">
+			</div>
 			<table id="Scripts" class="tableCom">
 				
 			</table>

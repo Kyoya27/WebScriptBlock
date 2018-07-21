@@ -17,10 +17,9 @@ function getScript(){
 		dataType : 'json',
 		success: function(data) {
 			if(data != undefined){
-
 				data.sort(function(a,b){
 					return new Date(b.downloads_count) - new Date(a.downloads_count);
-				})
+				});
 				
 				$("#Scripts").html("");
 
@@ -37,17 +36,20 @@ function getScript(){
 				$(content).appendTo("#Scripts");
 
 				for(let i = 0; i < data.length; i++){
-					let content = "<tr>";
-					content += "<td>"+data[i].category+"</td>";
-					content += "<td>"+data[i].name+"</td>";
-					content += "<td>"+data[i].size+" kb</td>";
-					content += "<td>"+data[i].downloads_count+"</td>";
-					content += "<td><a href=\"#\" onclick=\"displayDown("+data[i].id+")\">Download</a></td>";
-          if(sessionStorage.getItem("token")) {
-						content += "<td><a href=\"#\" onclick=\"displayReport('"+data[i].name+"', "+data[i].id+")\">Report</a></td>";
-          }
-					content += "</tr>";
-					$(content).appendTo("#Scripts");
+					if(data[i].available === 1) {
+						let content = "<tr>";
+						content += "<td>"+data[i].category+"</td>";
+						content += "<td>"+data[i].name+"</td>";
+						content += "<td>"+data[i].size+" o</td>";
+						content += "<td>"+data[i].downloads_count+"</td>";
+						content += "<td><a href=\"#\" onclick=\"displayDown("+data[i].id+")\">Download</a></td>";
+						if(sessionStorage.getItem("token")) {
+							content += "<td><a href=\"#\" onclick=\"displayReport('"+data[i].name+"', "+data[i].id+", "+data[i].downloads_count+")\">Report</a></td>";
+						}
+						content += "</tr>";
+						
+						$(content).appendTo("#Scripts");
+					}
 				}
 
 			}
@@ -74,10 +76,11 @@ function closeDown() {
     modal.style.display = "none";
 }
 
-function displayDown(id){
+function displayDown(id_script, dl_count){
+	$("#sendCmt").data("id", id_script);
 	var modal = document.getElementById('downModal');
 	$.ajax({
-		url: "http://localhost:8080/script?id="+id,
+		url: "http://localhost:8080/script?id="+id_script,
 		type: "GET",
 		beforeSend: function(xhr){
 			xhr.setRequestHeader("Content-type", "application/json");
@@ -85,85 +88,61 @@ function displayDown(id){
 		dataType : 'json',
 		success: function(data) {
 			if(data != undefined){
-				$(".downTitle").html(data[0].name);
-				$(".downDesc").html(data[0].description);
-				$(".downModalButton").html("<a href=\"scripts/"+data[0].name+"_"+id+".sm\" class=\"btn btn-primary addButton\" onclick=\"update_dlc("+id+"); closeDown()\">Download Script</a>");
+				$(".downTitle").html("<div class='offset-md-1'>"+data[0].name+"</div>");
+				$(".downDesc").html("<div class='text-justify offset-md-1 col-md-10'>"+data[0].description+"</div>");
+				$(".downModalButton").html("<a href=\"Scripts/"+data[0].name+"_"+id_script+".sm\" class=\"btn btn-primary addButton\" onclick=\"update_dlc("+id_script+"); closeDown()\">Download Script</a>");
 				modal.style.display = "block";
 			}
 		}
 	});
+	
+	dispComments(id_script);
 }
 
-function reportScript(id){
-	var script = 0;
-	var report = 0;
-	var download = 0;
-
+function dispComments(id_script) {
 	$.ajax({
-		url: "http://localhost:8080/script?id="+id,
+		url: "http://localhost:8080/script/getComments/"+id_script,
 		type: "GET",
-		beforeSend: function(xhr){
+		beforeSend: function(xhr) {
 			xhr.setRequestHeader("Content-type", "application/json");
-		},
-		dataType : 'json',
-		success: function(data) {
-			if(data != undefined){
-				script = data;
-				report = data[0].report;
-				donwload = data[0].downloads_count;
-			}
 		}
-	});
+	})
+		.done((res) => {
+		if(res !== undefined) {
+			$("#commentsDisplayDownload").html("");
+			res.forEach((el) => {
+				let content = "<hr align='center' width='50%' class='mt-3 mb-4 bg-white'>"; 
+				content += "<div class='text-justify offset-md-3 col-md-6'>"+el.comment+"</div>";
+				content += "<div class='offset-md-5'>- "+el.User.name+"</div>";
+				$("#commentsDisplayDownload").append(content);
+			})
+		}
+	})
+}
 
-	if(download * 0.1 < (report+1)){
-		$.ajax({
-			url: "http://localhost:8080/script/update",
-			type: "POST",
-			data:JSON.stringify({
-				"id": id,
-				"category": "dangerous",
-				"report" : report+1
-			}),
-			dataType:'json',
-			async: false,
-			beforeSend: function(xhr){
-				xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("token"));
-				xhr.setRequestHeader("Content-type", "application/json");
-			}
+function sendComment() {
+	const comment = $("#commentArea").val();
+	const id_script = $("#sendCmt").data("id");
+	
+	$.ajax({
+		url: "http://localhost:8080/script/addComment",
+		type: "POST",
+		beforeSend: function(xhr) {
+			xhr.setRequestHeader("Content-type", "application/json");
+			xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("token"));
+		},
+		data: JSON.stringify({
+			id_script: id_script,
+			comment: comment
 		})
-    .done(function(data) {
-      getScript();
-    })
-    .fail(function() {
-      sessionStorage.clear();
-      displayConnect();
-      window.location = "homepage.php?reco=yes"
-    });
-    
-	}else{
-		$.ajax({
-			url: "http://localhost:8080/script/update",
-			type: "POST",
-			data:JSON.stringify({
-				"id": id,
-				"report" : report+1
-			}),
-			dataType:'json',
-			async: false,
-			beforeSend: function(xhr){
-				xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("token"));
-				xhr.setRequestHeader("Content-type", "application/json");
-			}
-		})
-    .done(function() {
-      getScript();
-    })
-    .fail(function() {
-      sessionStorage.clear();
-      displayConnect();
-      window.location = "homepage.php?reco=yes"
-    });;
-	}
+	})
+	.done((res) => {
+		dispComments(id_script);
+		$("#commentArea").val("");
+	})
+	.catch((err) => {
+		console.log(err.responseText);
+	})
 }
 
 function downScript(name, id){
@@ -233,32 +212,35 @@ function searchRefresh(){
 }
 
 function upload_script() {
-  let file = $("#input_file")[0].files[0];
+  var file = $("#input_file")[0].files[0];
 	
-  if(file === undefined || file.name.split('.').pop().localeCompare('sm') !== 0) {
-    $("#input_file_error").removeClass('text-hide');
+  if(file === undefined) {
+		$("#upload_error").html("You must provide a script").removeClass('d-none');
+	} else if(file.name.split('.').pop().localeCompare('sm') !== 0) {
+		$("#upload_error").html("Script format is  not valid").removeClass('d-none');
   } else {    
+		var name = $("#title_upload").val() === "" ? undefined : $("#title_upload").val();
+		var desc = $("#description_upload").val() === "" ? undefined : $("#description_upload").val();
     $.ajax({
       url: "http://localhost:8080/script/add",
       type: "POST",
-      data: JSON.stringify({
-        name: $("#title_upload").val(),
-        description: $("#description_upload").val(),
-        size: file.size,
-        id_user: sessionStorage.getItem("id")
-      }),
-//      async: false,
+      data: JSON.stringify([{
+        name: name,
+        description: desc,
+        size: file.size
+      }]),
       beforeSend: function(xhr){
-        xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
         xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("token"));
         xhr.setRequestHeader("Content-type", "application/json");
       }
     })
     .done(function(data) {
+			console.log(file)
+			console.log(data);
       var formData = new FormData();
       formData.append('file', file);
-      formData.append('id', data.id);
-      formData.append('name', $("#title_upload").val());
+      formData.append('id', data[0].id);
+      formData.append('name', data[0].name);
       closeUpload();
 
       $.ajax({
@@ -269,56 +251,97 @@ function upload_script() {
         data: formData
       })
       .done(function(data) {
-        closeUpload();
-          getScript();
-      });
+				getScript();
+				closeUpload();
+      })
+			.fail((err) => {
+				$.ajax({
+					url: "http://localhost:8080/script/remove/"+data.id,
+					type: "DELETE",
+					beforeSend: function(xhr){
+						xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("token"));
+						xhr.setRequestHeader("Content-type", "application/json");
+					}
+				})
+				.done((res) => {
+					$("#script_display_error").html("<a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>Error uploading the script").removeClass("d-none");
+				})
+			})
     })
-    .fail(function() {
-      sessionStorage.clear();
-      window.location = "homepage.php?reco=yes"
-    });
+    .fail(function(err) {
+//      sessionStorage.clear();
+//      window.location = "homepage.php?reco=yes"
+			$("#upload_error").html(err.responseJSON.error).removeClass('d-none');
+		});
   }
 }
 
 function closeUpload() {
 	var modal = document.getElementById('uploadModal');
 	modal.style.display = "none";
+	$("#upload_error").html("").addClass('d-none');
 }
 
-function displayReport(name, id) {
+function displayReport(name, id, dl) {
 	console.log(displayReport);
 	$("#reportTitle").html("Report " + name);
 	$("#reportTitle").attr("data-id", id);
+	$("#reportTitle").attr("data-dl", dl);
 	$("#reportModal").css("display", "block");
 }
 
 function closeReport() {
 	$("#reportModal").css("display", "none");
+	$("#report_comment").val("");
 }
 
 function reportScript() {
 	const id_script = parseInt($("#reportTitle").data("id"));
-	const id_user = parseInt(sessionStorage.getItem("id"));
 	const comment =	$("#report_comment").val() === "" ? undefined : $("#report_comment").val();
-
+	const dl = parseInt($("#reportTitle").data("dl"));
 	
 	$.ajax({
-		url: "http://localhost:8080/report/add",
-		type: "POST",
+		url: "http://localhost:8080/report/countReports/"+id_script,
+		type: "GET",
 		beforeSend: function(xhr){
 			xhr.setRequestHeader("Content-type", "application/json");
-			xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("token"));
-		},
-		data: {
-			id_script: id_script,
-			id_user: id_user,
-			comment: comment
 		}
 	})
-	.done(function(res) {
-		console.log(res);
+	.done((nb_reports) => {
+		var category = "clean";
+		if(dl * 0.1 < (nb_reports+1)){
+			category = "dangerous"
+		}
+		
+		$.ajax({
+			url: "http://localhost:8080/script/update",
+			type: "POST",
+			data: JSON.stringify({
+				id: id_script,
+				category: category
+			}),
+			beforeSend: function(xhr){
+				xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("token"));
+				xhr.setRequestHeader("Content-type", "application/json");
+			}
+		})
+		.done((res) => {
+			$.ajax({
+				url: "http://localhost:8080/report/add",
+				type: "POST",
+				beforeSend: function(xhr){
+					xhr.setRequestHeader("Content-type", "application/json");
+					xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("token"));
+				},
+				data: JSON.stringify({
+					id_script: id_script,
+					comment: comment
+				})
+			})
+			.done((res) => {
+				getScript();
+				closeReport();
+			})
+		})
 	})
-	.fail(function(err) {
-		console.log(err.responseText);
-	});
 }
