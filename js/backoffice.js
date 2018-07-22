@@ -285,9 +285,8 @@ function displayBlock(id_block) {
 		}
 	})
 	.done((res) => {
-		console.log(res)
     res = res[0]
-    console.log("res")
+    console.log(res)
 		$("#bt").html("");
 		$("#at").html("");
 		$("#it").html("");
