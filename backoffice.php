@@ -34,7 +34,7 @@
 			</table>
 		</div>
 	</div>
-	
+
 	<div class="articlePartTitle backgroundArticle">Blocks</div>
 	<div class="article">
 		<div class="tableBack">
@@ -47,6 +47,6 @@
 			</table>
 		</div>
 		<br/>
-		<button type="button" class=" col-md-4 btn btn-darkblue text-white" onclick="displayAddBlock()">Add block</button>
 	</div>
+  <button type="button" class="col-md-4 btn btn-darkblue text-white" onclick="displayAddBlock()">Create block</button>
 </body>

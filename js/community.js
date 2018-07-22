@@ -8,11 +8,21 @@ $(document).ready(function(){
 });
 
 function getScript(){
+  var url;
+  if(sessionStorage.getItem("token")) {
+    url = "http://localhost:8080/script/getCheckReports";
+  } else {
+    url = "http://localhost:8080/script/";
+  }
+  
 	$.ajax({
-		url: "http://localhost:8080/script",
+		url: url,
 		type: "GET",
 		beforeSend: function(xhr){
 			xhr.setRequestHeader("Content-type", "application/json");
+      if(sessionStorage.getItem("token")) {
+       xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("token"));
+      }
 		},
 		dataType : 'json',
 		success: function(data) {
@@ -44,14 +54,17 @@ function getScript(){
 						content += "<td>"+data[i].downloads_count+"</td>";
 						content += "<td><a href=\"#\" onclick=\"displayDown("+data[i].id+")\">Download</a></td>";
 						if(sessionStorage.getItem("token")) {
-							content += "<td><a href=\"#\" onclick=\"displayReport('"+data[i].name+"', "+data[i].id+", "+data[i].downloads_count+")\">Report</a></td>";
+              console.log(data[i].reported)
+              if(data[i].reported !== true) {
+						    content += "<td><a href=\"#\" onclick=\"displayReport('"+data[i].name+"', "+data[i].id+", "+data[i].downloads_count+")\">Report</a></td>";
+              } else {
+                content += "<td class='bg-danger text-white'>Report</td>";
+              }
 						}
 						content += "</tr>";
-						
 						$(content).appendTo("#Scripts");
 					}
 				}
-
 			}
 		}
 	});

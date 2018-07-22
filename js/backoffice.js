@@ -2,7 +2,6 @@ $(document).ready(function(){
 	getUsers();
 	getReportedScripts();
 	getBlocks();
-	displayAddBlock();
 });
 
 function getUsers(){
@@ -37,7 +36,7 @@ function getUsers(){
 				for(let i = 0; i < data.length; i++){
 					let content = "<tr>";
 					content += "<td>"+data[i].id+"</td>"
-					content += "<td>"+data[i].name+"</td>";
+					content += "<td id=\"name_"+data[i].id+"\">"+data[i].name+"</td>";
 					content += "<td>"+data[i].email+"</td>";
 					content += "<td>"+data[i].date_insc+"</td>";
 					content += "<td id=\"admin_"+data[i].id+"\">"+data[i].admin+"</td>";
@@ -52,27 +51,45 @@ function getUsers(){
 	});
 }
 
+function deleteUser(id) {
+  $.ajax({
+    url: "http://localhost:8080/user/update",
+    type: "POST",
+    data:JSON.stringify({
+      "id": id,
+      "enabled" : 0
+    }),
+    dataType:'json',
+    beforeSend: function(xhr){
+      xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("token"));
+      xhr.setRequestHeader("Content-type", "application/json");
+    },
+    success: function() {
+      getUsers();
+    }
+  });
+}
+
 function displayUpdate(id){
-
+	$("#name_"+id).html("<input id=\"newname_"+id+"\" class=\"userInput\" type=\"text\" value=\""+$("#name_"+id).html()+"\">");
 	$("#admin_"+id).html("<input id=\"newadmin_"+id+"\" class=\"userInput\" type=\"text\" value=\""+$("#admin_"+id).html()+"\">");
-	$("#active_"+id).html("<input id=\"newactive_"+id+"\" class=\"userInput\" type=\"text\" value=\""+$("#active_"+id).html()+"\">");
 	$("#enabled_"+id).html("<input id=\"newenabled_"+id+"\" class=\"userInput\" type=\"text\" value=\""+$("#enabled_"+id).html()+"\">");
-	$("#link_"+id).html("<div style=\"cursor: pointer;\" onclick=\"confirmUpdate("+id+")\">&#10003;</div> &times; ");
-
+	$("#link_"+id).html("<div style=\"cursor: pointer;\" onclick=\"confirmUpdate("+id+")\">&#10003;</div>");
+	$("#link_"+id).append("<div style=\"cursor: pointer;\" onclick=\"deleteUser("+id+")\">&times;</div>");
 }
 
 function confirmUpdate(id){
-	if($("#newadmin_"+id).val() !== "" && $("#newactive_"+id).val() !== "" && $("#newenabled_"+id).val() !== ""){
+	if($("#newname_"+id).val() !== "" && $("#newadmin_"+id).val() !== "" && $("#newenabled_"+id).val() !== ""){
 		$.ajax({
 			url: "http://localhost:8080/user/update",
 			type: "POST",
 			data:JSON.stringify({
+        "id": id,
+				"name" : $("#newname_"+id).val(),
 				"admin" : $("#newadmin_"+id).val(),
-				"active" : $("#newactive_"+id).val(),
 				"enabled" : $("#newenabled_"+id).val()
 			}),
 			dataType:'json',
-			async: false,
 			beforeSend: function(xhr){
 				xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("token"));
 				xhr.setRequestHeader("Content-type", "application/json");
@@ -240,6 +257,7 @@ function getBlocks() {
 		content += "<th onclick='sortTable(1)'>Description&#8597</th>";
 		content += "<th onclick='sortTable(1)'>Type&#8597</th>";
 		content += "<th onclick='sortTable(1)'>Show&#8597</th>";
+		content += "<th onclick='sortTable(1)'>Remove&</th>";
 		content += "</tr>";
 		$(content).appendTo("#Blocks");
 		
@@ -249,6 +267,7 @@ function getBlocks() {
 			content += "<td><div class='float-left text-justify'>"+el.description+"</td></td>";
 			content += "<td>"+el.type+"</td>";
 			content += "<td><a style='cursor: pointer; color: skyblue' onclick='displayBlock("+el.id+")'>Details</a></td>";
+			content += "<td><a style='cursor: pointer; color: skyblue;' onclick='removeBlock("+el.id+")'>X</a></td>";
 			$("#Blocks").append(content);
 		});
 	})
@@ -267,12 +286,14 @@ function displayBlock(id_block) {
 	})
 	.done((res) => {
 		console.log(res)
+    res = res[0]
+    console.log("res")
 		$("#bt").html("");
 		$("#at").html("");
 		$("#it").html("");
 		$("#ot").html("");
 		
-		let content = "<tr class=\"tableTitle align-middle\" style=\"font-size: 17px;\">";
+		let content = "<tr class='tableTitle align-middle' style='font-size: 17px;'>";
 		content += "<th>Name</th>";
 		content += "<th class='col-md-6'>Description</th>";
 		content += "<th class='col-md-3'>Type</th>";
@@ -290,90 +311,30 @@ function displayBlock(id_block) {
 		for(var key in res) {
 			if(!res.hasOwnProperty(key)) continue;
 			if(!Array.isArray(res[key])) continue;
-			var wh;
-			switch(count) {
-				case 1:
-					wh = "#at";
-					break;
-				case 2:
-					wh = "#it";
-					break;
-				case 3:
-					wh = "#ot";
-					break;
-			}
-			$(wh).append("<tr class=\"tableTitle align-middle\" style=\"font-size: 17px;\"></tr>");
-			$(wh).append("<tr class='align-middle'></tr>");
+      var wh;
+      if(res[key].length === 0) {
+        if(count === 1) { $("#at").html("No Arguments"); }
+        else if(count === 2) { $("#it").html("No Arguments"); }
+      } else {
+        if(count === 1) { wh = "#at"; }
+        else if(count === 2) { wh = "#it"; }
+      }
+      
+      var ver = false;
+			$(wh).append("<tr class='tableTitle align-middle' style='font-size: 17px;'></tr>");
 			res[key].forEach((el) => {
+        $(wh).append("<tr class='align-middle'></tr>");
 				for(var k in el) {
 					if(!el.hasOwnProperty(k)) continue;
 					if(typeof el[k] === 'object') continue;
 					if(k === "id") continue;
-					$(wh+" tr").first().append("<th>"+k+"</th>");
-					$(wh+" tr").last().append("<td class='pl-3 pr-3 pt-1 pb-1'>"+el[k]+"</td>");
+          if(!ver) $(wh+" > tr").first().append("<th>"+k+"</th>");
+					$(wh+" > tr").last().append("<td class='pl-3 pr-3 pt-1 pb-1 col'>"+el[k]+"</td>");
 				}
+        ver = true;
 			});
 			count++;
 		}
-//		
-//		if(res.Arguments.length !== 0) {
-//			content = "<tr class=\"tableTitle align-middle\" style=\"font-size: 13px;\">";
-//			content += "<th>Name</th>";
-//			content += "<th>Description</th>";
-//			content += "<th>Key value</th>";
-//			content += "</tr>";
-//			$("#at").append(content);
-//
-//			res.Arguments.forEach((el) => {
-//				content = "<tr class='align-middle'>";
-//				content += "<td class='pl-3 pr-3 pt-1 pb-1'>"+el.name+"</td>";
-//				content += "<td class='text-justify pl-3 pr-3 pt-1 pb-1 col-md-5'>"+el.description+"</td>";
-//				content += "<td class='pl-3 pr-3 pt-1 pb-1'>"+el.keyValue+"</td>";
-//				content += "</tr>";
-//				$("#at").append(content);
-//			});
-//		}
-//		
-//		if(res.Instructions.length !== 0) {
-//			content = "<tr class=\"tableTitle align-middle\" style=\"font-size: 13px;\">";
-//			content += "<th>Name</th>";
-//			content += "<th>Syntax</th>";
-//			content += "<th>Platform</th>";
-//			content += "<th>Type</th>";
-//			content += "</tr>";
-//
-//			res.Instructions.forEach((el) => {
-//				content = "<tr class='align-middle'>";
-//				content += "<td class='pl-3 pr-3 pt-1 pb-1'>"+el.name+"</td>";
-//				content += "<td class='text-justify pl-3 pr-3 pt-1 pb-1 col-md-5'>"+el.syntax+"</td>";
-//				content += "<td class='pl-3 pr-3 pt-1 pb-1'>"+el.platform+"</td>";
-//				content += "<td class='pl-3 pr-3 pt-1 pb-1'>"+el.type+"</td>";
-//				content += "</tr>";
-//				$("#it").append(content);
-//			});
-//		}
-//		
-//		if(res.Options.length !== 0) {
-//			content = "<tr class=\"tableTitle align-middle\" style=\"font-size: 13px;\">";
-//			content += "<th>Name</th>";
-//			content += "<th>Syntax</th>";
-//			content += "<th>Platform</th>";
-//			content += "<th>Type</th>";
-//			content += "</tr>";
-//
-//			res.Instructions.forEach((el) => {
-//				content = "<tr class='align-middle'>";
-//				content += "<td class='pl-3 pr-3 pt-1 pb-1'>"+el.name+"</td>";
-//				content += "<td class='text-justify pl-3 pr-3 pt-1 pb-1 col-md-5'>"+el.syntax+"</td>";
-//				content += "<td class='pl-3 pr-3 pt-1 pb-1'>"+el.platform+"</td>";
-//				content += "<td class='pl-3 pr-3 pt-1 pb-1'>"+el.type+"</td>";
-//				content += "</tr>";
-//				$("#ot").append(content);
-//			});
-//		}
-	})
-	.fail((err) => {
-		
 	})
 }
 
@@ -383,13 +344,212 @@ function closeBlock() {
 	getBlocks();
 }
 
+var resetAB;
+
 function displayAddBlock() {
 	var modal = document.getElementById('addblockModal');
+  resetAB = $(modal).html();
 	modal.style.display = "block";
 }
 
 function closeAddBlock() {
 	var modal = document.getElementById('addblockModal');
 	modal.style.display = "none";
+  $("#addblockModal").html(resetAB)
 	getBlocks();
+}
+
+function remove_arg_line(id) {
+  id.remove();
+}
+
+function remove_inst_line(id) {
+  id.remove();
+}
+
+function remove_opt_line(id) {
+  id.remove();
+}
+
+function add_arg_row() {
+  var last_id = $("#hr_inst").prev().get(0).id;
+  $("#"+last_id+" .add_arg").addClass("bg-danger text-white").val("-").attr("onclick", "remove_arg_line("+last_id+")");
+  
+  $('<div class="form-row pb-2 pt-2 args_info" id="'+(last_id + 1)+'">'+
+      '<div class="col-md-2 d-flex flex-row-reverse align-bottom">'+
+        '<input type="button" value="+" class="btn add_arg" onclick="add_arg_row()">'+
+      '</div>'+
+      '<div class="col-md-2">'+
+        '<input type="text" class="form-control" data-key="name" placeholder="Name">'+
+      '</div>'+
+      '<div class="col-md-3">'+
+        '<input type="text" class="form-control" data-key="keyValue" placeholder="Key">'+
+      '</div>'+
+      '<div class="col-md-4">'+
+        '<input type="text" class="form-control" data-key="description" placeholder="Description">'+
+      '</div>'+
+    '</div>').insertBefore("#hr_inst")
+}
+
+function add_inst_row() {
+  var last_id = $("#hr_end").prev().get(0).id;
+  $("#"+last_id+" .add_inst").addClass("bg-danger text-white").val("-").attr("onclick", "remove_inst_line("+last_id+")");
+  
+  $('<div class="form-row pb-2 pt-2 inst_infos" id="'+(last_id + 1)+'">'+
+      '<div class=" col-md-2 d-flex flex-row-reverse align-bottom">'+
+        '<input type="button" value="+" class="btn add_inst" onclick="add_inst_row()">'+
+      '</div>'+
+      '<div class="col-md-1">'+
+        '<input type="text" class="form-control" data-key="name" placeholder="Name">'+
+      '</div>'+
+      '<div class="col-md-2">'+
+        '<input type="text" class="form-control" data-key="syntax" placeholder="Syntax">'+
+      '</div>'+
+      '<div class="col-md-2">'+
+        '<select class="custom-select" data-key="type">'+
+          '<option value="blocs">blocs</option>'+
+          '<option value="arguments">arguments</option>'+
+          '<option value="text-only">text-only</option>'+
+        '</select>'+
+     ' </div>'+
+      '<div class="col-md-2">'+
+        '<select class="custom-select" data-key="platform">'+
+          '<option value="Windows">Windows</option>'+
+          '<option value="Unix">Unix</option>'+
+        '</select>'+
+      '</div>'+
+      '<div class="col-md-1">'+
+        '<select class="custom-select" data-key="chariot">'+
+          '<option value="1">Input</option>'+
+          '<option value="0">Nothing</option>'+
+        '</select>'+
+      '</div>'+
+      '<div class="col-md-1">'+
+        '<input type="number" class="form-control" data-key="pos">'+
+      '</div>'+
+    '</div>').insertBefore("#hr_end")
+}
+
+function addBlock() {
+  var counter = 0;
+  var block_obj = {};
+  var args = [];
+  var insts = [];
+  var temp;
+  
+  $.each($("#add_block_form > .form-row").not(".titles"), function(key, value) {
+    if($(value).hasClass("args_infos")) counter = 1;
+    if($(value).hasClass("inst_infos")) counter = 2;
+    temp = {}
+    $(value).find(":input").not(".add_arg, .add_inst, .add_opt").each((k, v) => {
+      temp[$(v).data("key")] = $(v).val();
+    })
+    
+    var ok = true;
+    for(var k in temp) {
+      if(!temp.hasOwnProperty(k)) continue;
+      if(temp[k] === "") {
+        ok = false;
+        break;
+      }
+    }
+    
+    if(ok) {
+      switch(counter) {
+        case 0:
+          block_obj = temp;
+          break;
+        case 1:
+          args.push(temp);
+          break;
+        case 2:
+          insts.push(temp);
+          break;
+      }
+    }
+  })
+  
+  createBlock(block_obj, args, insts);
+}
+
+function createBlock(block_obj, args_arr, insts_arr, opts_arr) {
+  
+  if($.isEmptyObject(block_obj)) return;
+  
+  $.ajax({
+    url: "http://localhost:8080/block/add",
+    type: "POST",
+    beforeSend: function(xhr){
+			xhr.setRequestHeader("Content-type", "application/json");
+			xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("token"));
+		},
+		data : JSON.stringify(block_obj)
+  })
+  .done((res) => {
+    args_arr.forEach((el) => {
+      el.id_block = res.id;
+      $.ajax({
+        url: "http://localhost:8080/argument/addToBlock",
+        type: "POST",
+        aync: false,
+        beforeSend: function(xhr){
+          xhr.setRequestHeader("Content-type", "application/json");
+          xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("token"));
+        },
+        data : JSON.stringify(el)
+      })
+    })
+    
+    insts_arr.forEach((el) => {
+      el.id_block = res.id;
+      $.ajax({
+        url: "http://localhost:8080/instruction/addToBlock",
+        type: "POST",
+        async: false,
+        beforeSend: function(xhr){
+          xhr.setRequestHeader("Content-type", "application/json");
+          xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("token"));
+        },
+        data : JSON.stringify(el)
+      })
+    })
+    closeAddBlock();
+  })
+  .fail((err) => {
+    console.log(err.responseText);
+  })
+}
+
+function activeOpt(item) {
+  $(".opt").each((k, v) => {
+    console.log(v)
+    if($(v).hasClass("btn-success")) {
+      console.log("ici")
+      $(v).removeClass("btn-success");
+    }
+  });
+  
+  $(item).addClass("btn-success");
+}
+
+function removeBlock(id_block) {
+  $.ajax({
+    url: "http://localhost:8080/block/removeFull/"+id_block,
+    type: "DELETE",
+    beforeSend: (xhr) => {
+      xhr.setRequestHeader("Content-type", "application/json");
+      xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("token"))
+    }
+  })
+  .done((res) => {
+    getBlocks();
+  })
+}
+
+function editBlock() {
+  var a = $("#blockModal").find("td");
+  $(a).each((i, v) => {
+    let h = $(v).html()
+    $(v).html("<input type='text' value='"+h+"' class='form-control col'>")
+  });
 }
