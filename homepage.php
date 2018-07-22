@@ -21,6 +21,8 @@
 		</div>
 		<div id="addModaltitle" class="articleTitle"  style="text-align: center !important;">Add an Article</div>
 		<div style="text-align: center;">
+			<div id="article_error" class="alert alert-danger pt-2 pb-2 d-none" style="text-align: left">
+			</div>
 			<div>
 				<input id="articleTitle" class="addInput" type="text" placeholder="Title :">
 			</div>

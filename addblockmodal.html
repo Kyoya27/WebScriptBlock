@@ -1,0 +1,131 @@
+<div id="addblockModal" class="modal" style="text-align: center; overflow-y: auto;">
+	<div class="modal-content">
+		<div style="text-align: right;">
+			<span onclick="closeAddBlock()" class="close">&times;</span>
+		</div>
+		<div class="row">
+			<div class="col-md-12 text-center">
+				<p class="h1 modalTitles" id="reportTitle">Add Block</p>
+				<hr align="center" width="50%" class="mt-3 mb-4 bg-white">
+			</div>
+		</div>
+		<div class="row text-white" style="text-align: initial">
+      <div class="col-md-12">
+        <form id="add_block_form">
+          <div class="form-row pb-2 pt-2 block_infos">
+            <div class="offset-md-1 col-md-3">
+              <label for="block_name">Block name</label>
+              <input type="text" class="form-control" id="block_name" data-key="name" placeholder="Name">
+            </div>
+            <div class="col-md-4">
+              <label for="block_desc">Block description</label>
+              <input type="text" class="form-control" id="block_desc" data-key="description" placeholder="Description">
+            </div>
+            <div class="col-md-3">
+              <label for="block_type">Block type</label>
+              <select class="custom-select" id="block_type" data-key="type">
+                <option value="SIMPLE">SIMPLE</option>
+                <option value="CONTENT">CONTENT</option>
+                <option value="CONTENT-COND|TRUE|FALSE">CONTENT-COND|TRUE|FALSE</option>
+                <option value="CONTENT-COND|TRUE">CONTENT-COND|TRUE</option>
+              </select>
+            </div>
+          </div>
+
+          <hr class="bg-white col-md-3" id="hr_arg">
+
+          <div class="form-row pt-1 titles">
+            <div class="col-md-2">
+            </div>
+            <div class="col-md-2">
+              <label for="name" class='m-0'>Argument name</label>
+            </div>
+            <div class="col-md-3">
+              <label for="keyValue" class='m-0'>Argument key</label>
+            </div>
+            <div class="col-md-4">
+              <label for="description" class='m-0'>Argument desc.</label>
+            </div>
+          </div>
+          
+          <div class="form-row pb-2 pt-2 args_infos" id="args_infos">
+            <div class="col-md-2 d-flex flex-row-reverse align-bottom">
+              <input type="button" value="+" class="btn add_arg" onclick="add_arg_row()">
+            </div>
+            <div class="col-md-2">
+              <input type="text" class="form-control" data-key="name" placeholder="Name">
+            </div>
+            <div class="col-md-3">
+              <input type="text" class="form-control" data-key="keyValue" placeholder="Key">
+            </div>
+            <div class="col-md-4">
+              <input type="text" class="form-control" data-key="description" placeholder="Description">
+            </div>
+          </div>
+
+          <hr class="bg-white col-md-3" id="hr_inst">
+
+          <div class="form-row pt-2 titles">
+            <div class="col-md-2 d-flex flex-row-reverse align-bottom">
+            </div>
+            <div class="col-md-1">
+              <label for="name" class='m-0'>Instr. name</label>
+            </div>
+            <div class="col-md-2">
+              <label for="syntax" class='m-0'>Instr. syntax</label>
+            </div>
+            <div class="col-md-2">
+              <label for="type" class='m-0'>Instr. type</label>
+            </div>
+            <div class="col-md-2">
+              <label for="platform" class='m-0'>Instr. platform</label>
+            </div>
+            <div class="col-md-1">
+              <label for="chariot" class='m-0'>Instr. chariot</label>
+            </div>
+            <div class="col-md-1">
+              <label for="pos" class='m-0'>Instr. pos.</label>
+            </div>
+          </div>
+          
+          <div class="form-row pb-2 pt-2 inst_infos" id="inst_infos">
+            <div class=" col-md-2 d-flex flex-row-reverse align-bottom">
+              <input type="button" value="+" class="btn add_inst" onclick="add_inst_row()">
+            </div>
+            <div class="col-md-1">
+              <input type="text" class="form-control" data-key="name" placeholder="Name">
+            </div>
+            <div class="col-md-2">
+              <input type="text" class="form-control" data-key="syntax" placeholder="Syntax">
+            </div>
+            <div class="col-md-2">
+              <select class="custom-select" data-key="type">
+                <option value="blocs">blocs</option>
+                <option value="arguments">arguments</option>
+                <option value="text-only">text-only</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <select class="custom-select" data-key="platform">
+                <option value="Windows">Windows</option>
+                <option value="Unix">Unix</option>
+              </select>
+            </div>
+            <div class="col-md-1">
+              <select class="custom-select" data-key="chariot">
+                <option value="1">Input</option>
+                <option value="0">Nothing</option>
+              </select>
+            </div>
+            <div class="col-md-1">
+              <input type="number" class="form-control" data-key="pos">
+            </div>
+          </div>
+          
+          <hr class="col-md-3" id="hr_end">
+        </form>
+        <button type="button" class="offset-md-4 col-md-4 btn btn-darkblue text-white" onclick="addBlock()">Add block</button>
+      </div>
+    </div>
+	</div>
+</div>

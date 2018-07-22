@@ -1,4 +1,4 @@
-<div id="downModal" class="modal" style="text-align: center;">
+<div id="downModal" class="modal" style="text-align: center; overflow-y: auto;">
 	<div class="modal-content">
 		<div style="text-align: right;">
 			<span onclick="closeDown()" class="close">&times;</span>
@@ -10,6 +10,18 @@
 			<div class="articleBody downDesc">
 			</div>
 			<div class="downModalButton"></div>
+			<br/>
+			<div id="commentsDisplayDownload" class="tableCom">
+			</div>
+			<hr align='center' width='50%' class='mt-3 mb-4 bg-white'>
+			<did id="sendComment" class='ml-0 text-justify offset-md-2 col-md-7'>
+				<textarea id="commentArea" class="col-md-6" placeholder="Write your comment here" rows="5"></textarea>
+				<br/>
+				<br/>
+				<div class="btn btn-primary addButton offset-md-4 col-md-2" onclick="sendComment()" id="sendCmt">
+					Send comment
+				</div>
+			</did>
 		</div>
 	</div>
 </div>

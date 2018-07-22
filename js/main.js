@@ -16,10 +16,6 @@ $(document).ready(function() {
 		$("div#menuNav").append('<a id="backoffice_btn" href="backoffice.php">Back Office <span class="caret"></span></a>');
     $("a#backoffice_btn").removeClass("invisible");
     $("a#backoffice_btn").css("cursor", "pointer");
-
-		$("div#menuNav").append('<a id="report_btn" href="report.php">Report Office <span class="caret"></span></a>');
-		$("a#backoffice_btn").removeClass("invisible");
-		$("a#backoffice_btn").css("cursor", "pointer");
 		
     var lastpart = window.location.href.substr(window.location.href.lastIndexOf('/') + 1);
     if(lastpart === "homepage.php" || lastpart === "homepage.php?" || lastpart === "homepage.php#") {
@@ -28,7 +24,6 @@ $(document).ready(function() {
       $("a#article_btn").removeClass("invisible");
       $("a#article_btn").on("click", displayAdd);
       $("a#article_btn").css("cursor", "pointer");
-
     }
   }
   
@@ -40,16 +35,11 @@ $(document).ready(function() {
   }
 });
 
-$('#backoffice_btn').on("click", function(e){
-	console.log("nani")
-	$("#bo_dropdown").toggle();
-	e.stopPropagation();
-	e.preventDefault();
-});
-
 function closeConnect() {
 	var modal = document.getElementById('connectModal');
-    modal.style.display = "none";
+  modal.style.display = "none";
+	$("#login_error").html("").addClass("d-none");
+	$("#signin_error").html("").addClass("d-none");
 }
 
 function displayConnect(){
@@ -79,16 +69,16 @@ function sign_up() {
   if(pwd2 === "") {
     error = true;
   }
-  
+	
   if(error === false) {
 		$.ajax({
 			url: "http://localhost:8080/user/register",
-			data: JSON.stringify({
+			data: JSON.stringify([{
 				name: name,
 				email: email,
 				password1: pwd1,
 				password2: pwd2
-			}),		
+			}]),
 			method: "POST",
 			beforeSend: function(xhr){
 				xhr.setRequestHeader("Content-type", "application/json");
@@ -96,10 +86,15 @@ function sign_up() {
 		})
 		.done(function(data) {
 			console.log(data);
+			form.find("input[id='email_login']").val(email);
+			form.find("input[id='pwd1_login']").val(pwd1);
+			log_in();
 		})
 		.fail(function(err) {
-			console.log(err.responseJSON)
+			$("#signin_error").html(err.responseJSON.error).removeClass("d-none");
 		});
+	} else {
+		$("#signin_error").html("Invalid fields").removeClass("d-none");
 	}
 }
 
@@ -122,31 +117,36 @@ function log_in() {
 		$.ajax({
 			url: "http://localhost:8080/user/login",
 			method: "POST",
-			data: JSON.stringify({
+			data: JSON.stringify([{
 				email: email,
 				password: pwd
-			}),
+			}]),
 			beforeSend: function(xhr){
 				xhr.setRequestHeader("Content-type", "application/json");
 			}			
 		})
 		.done(function(data) {
-			console.log(data);
-      Object.keys(data).forEach(function(key) {
-      	sessionStorage.setItem(key, data[key]);
-     	});
-      
-      window.location = "homepage.php";
+			console.log("ici")
+      data.forEach((el) => {
+				console.log(el)
+				Object.keys(el).forEach(function(key) {
+					sessionStorage.setItem(key, el[key]);
+				});
+			})
+      window.location.reload();
 		})
 		.fail(function(err){
-			console.log(err.responseJSON)
+			console.log(err)
+			$("#login_error").html(err.responseJSON.error).removeClass("d-none");
 		});
-  }
+  } else {
+		$("#login_error").html("Fields are empty").removeClass("d-none");
+	}
 }
 
 function closeModal(modalId, event){
 	var modal = document.getElementById(modalId);
     if (event.target == modal) {
-        modal.style.display = "none";
+      modal.style.display = "none";
     }
 }
