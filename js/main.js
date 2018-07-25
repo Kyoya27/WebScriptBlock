@@ -86,8 +86,8 @@ function sign_up() {
 		})
 		.done(function(data) {
 			console.log(data);
-			form.find("input[id='email_login']").val(email);
-			form.find("input[id='pwd1_login']").val(pwd1);
+			$("#email_login").val(email);
+			$("#password_login").val(pwd1);
 			log_in();
 		})
 		.fail(function(err) {

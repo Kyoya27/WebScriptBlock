@@ -27,6 +27,7 @@
 
 .backgroundFront{
 	background-image: url("../image/front.jpg");
+	
 }
 
 .frontButton{
@@ -65,6 +66,8 @@
 	text-align: center;
 	margin-bottom: 20px;
 	background-image: url("../image/front.jpg");
+	background-repeat: no-repeat;
+	background-attachment: fixed;
 }
 
 .backgroundCenter{
